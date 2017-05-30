@@ -17,6 +17,9 @@ Module Input Variables
 - `env` - (string) - **REQUIRED** - Environment name - used to build name of resources and conditionally enable/disable certain features of the module
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
+- `connect_timeout` - (string) - How long to wait for a timeout in milliseconds (default: `5000`)
+- `first_byte_timeout` - (string) - How long to wait for the first bytes in milliseconds (default: `60000`)
+- `between_bytes_timeout` - (string) - How long to wait between bytes in milliseconds (default: `30000`)
 
 ### domain_name permutations
 
