@@ -16,10 +16,10 @@ resource "fastly_service_v1" "fastly" {
     address               = "${var.backend_address}"
     name                  = "default backend"
     port                  = 443
-    ssl_check_cert        = "false"
-    connect_timeout       = 5000
-    first_byte_timeout    = 60000
-    between_bytes_timeout = 30000
+    ssl_check_cert        = "true"
+    connect_timeout       = "${var.connect_timeout}"
+    first_byte_timeout    = "${var.first_byte_timeout}"
+    between_bytes_timeout = "${var.between_bytes_timeout}"
   }
 
   gzip {

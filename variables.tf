@@ -26,3 +26,21 @@ variable "force_ssl" {
   description = "Whether or not to force SSL (redirect requests to HTTP to HTTPS)"
   default     = "true"
 }
+
+variable "connect_timeout" {
+  type        = "string"
+  description = ""
+  default     = 5000
+}
+
+variable "first_byte_timeout" {
+  type        = "string"
+  description = ""
+  default     = 60000
+}
+
+variable "between_bytes_timeout" {
+  type        = "string"
+  description = ""
+  default     = 30000
+}

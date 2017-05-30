@@ -244,3 +244,27 @@ Plan: 1 to add, 0 to change, 0 to destroy.
     request_setting.2559674034.timer_support:     ""
     request_setting.2559674034.xff:               "append"
         """.strip() in output # noqa
+
+    def test_custom_timeouts(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'connect_timeout=12345',
+            '-var', 'first_byte_timeout=54321',
+            '-var', 'between_bytes_timeout=31337',
+            '-target=module.fastly_custom_timeouts',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert """
+    backend.4115911643.between_bytes_timeout:     "31337"
+    backend.4115911643.connect_timeout:           "12345"
+    backend.4115911643.error_threshold:           "0"
+    backend.4115911643.first_byte_timeout:        "54321"
+        """.strip() in output
