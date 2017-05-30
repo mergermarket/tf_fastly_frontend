@@ -25,7 +25,7 @@ resource "fastly_service_v1" "fastly" {
   gzip {
     name          = "file extensions and content types"
     extensions    = ["css", "js"]
-    content_types = ["text/html", "text/css"]
+    content_types = ["text/html", "text/css", "application/json"]
   }
 
   # Set force-miss (disables caching) and force-ssl (enables redirect from HTTP
