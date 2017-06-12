@@ -47,6 +47,48 @@ class TestTFFastlyFrontend(unittest.TestCase):
 Plan: 1 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
+    def test_create_fastly_service_in_live_creates_redirection(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=live',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert """
++ module.fastly.fastly_service_v1.fastly
+        """.strip() in output
+
+        assert """
+    default_host:                                 "www.domain.com"
+        """.strip() in output
+
+        assert """
+    domain.#:                                     "1"
+    domain.2448670921.comment:                    ""
+    domain.2448670921.name:                       "www.domain.com"
+        """.strip() in output
+
+        assert """
++ module.fastly.fastly_service_v1.fastly_bare_domain_redirection
+        """.strip() in output
+
+        assert """
+    header.1405633346.source:                     "\\"https://domain.com\\" + req.url"
+        """.strip() in output # noqa
+
+        assert """
+Plan: 2 to add, 0 to change, 0 to destroy.
+        """.strip() in output
+
     def test_create_fastly_service_with_custom_prefix_ci_env(self):
         # Given
 
@@ -106,7 +148,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert """
-Plan: 1 to add, 0 to change, 0 to destroy.
+Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
     def test_delete_x_powered_by_header(self):

@@ -75,3 +75,36 @@ resource "fastly_service_v1" "fastly" {
 
   force_destroy = true
 }
+
+# resource performing bare-domain redirection to prefix; only for live
+resource "fastly_service_v1" "fastly_bare_domain_redirection" {
+  name  = "${var.domain_name}-redirection"
+  count = "${var.env == "live" ? 1 : 0}"
+
+  domain {
+    name = "${var.domain_name}"
+  }
+
+  response_object {
+    name              = "redirect_bare_domain_to_prefix"
+    status            = 301
+    response          = "Moved Permanently"
+    request_condition = "all_urls"
+  }
+
+  header {
+    name              = "redirect_bare_domain_to_prefix"
+    destination       = "http.Location"
+    type              = "response"
+    action            = "set"
+    source            = "${format("\"https://%s\" + req.url", var.domain_name)}"
+    request_condition = "all_urls"
+  }
+
+  condition {
+    name      = "all_urls"
+    type      = "REQUEST"
+    priority  = 5
+    statement = "req.url ~ \".*\""
+  }
+}
