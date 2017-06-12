@@ -15,22 +15,12 @@ Module Input Variables
 - `domain_name` - (string) - **REQUIRED** - Domain name to serve as entry points for your service
 - `backend_address` - (string) - **REQUIRED** - Backend address to service requests for your domains
 - `env` - (string) - **REQUIRED** - Environment name - used to build name of resources and conditionally enable/disable certain features of the module
+- `prefix` - (string) - Domain prefix (default: `www`)
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
 - `connect_timeout` - (string) - How long to wait for a timeout in milliseconds (default: `5000`)
 - `first_byte_timeout` - (string) - How long to wait for the first bytes in milliseconds (default: `60000`)
 - `between_bytes_timeout` - (string) - How long to wait between bytes in milliseconds (default: `30000`)
-
-### domain_name permutations
-
-This module will actually configure two domain names which will be the entry point to the service - with `www` prefix and bare domain, as passed via the parameter.
-On top of this, depending on environment, for `non-live` environments, $env prefix will be added to the domain.
-
-Example full list of permutations for domain `domain.com` (i.e. you pass `domain.com` via `dns_domain` parameter) in all environments will be as following:
-
-| Environment | Domain names configured in Fastly |
-| `live` | `domain.com`, `www.domain.com` |
-| `ci` | `ci.domain.com`, `ci-www.domain.com` |
 
 Usage
 -----

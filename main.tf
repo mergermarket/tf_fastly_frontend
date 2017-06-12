@@ -2,14 +2,10 @@ resource "fastly_service_v1" "fastly" {
   name = "${var.env}-${var.domain_name}"
 
   domain {
-    name = "${var.env == "live" ? "www." : format("%s-www.", var.env)}${var.domain_name}"
+    name = "${var.env == "live" ? format("%s.", var.prefix) : format("%s-%s.", var.env, var.prefix)}${var.domain_name}"
   }
 
-  domain {
-    name = "${var.env == "live" ? "" : format("%s.", var.env)}${var.domain_name}"
-  }
-
-  default_host = "${var.env == "live" ? "www." : format("%s-www.", var.env)}${var.domain_name}"
+  default_host = "${var.env == "live" ? format("%s.", var.prefix) : format("%s-%s.", var.env, var.prefix)}${var.domain_name}"
   default_ttl  = 60
 
   backend {

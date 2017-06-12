@@ -34,15 +34,75 @@ class TestTFFastlyFrontend(unittest.TestCase):
 
         # Then
         assert """
-    domain.#:                                     "2"
-    domain.1665706793.comment:                    ""
-    domain.1665706793.name:                       "ci-www.domain.com"
-    domain.469113303.comment:                     ""
-    domain.469113303.name:                        "ci.domain.com"
+    default_host:                                 "ci-www.domain.com"
         """.strip() in output
 
         assert """
-    name:                                         "ci-domain.com"
+    domain.#:                                     "1"
+    domain.1665706793.comment:                    ""
+    domain.1665706793.name:                       "ci-www.domain.com"
+        """.strip() in output
+
+        assert """
+Plan: 1 to add, 0 to change, 0 to destroy.
+        """.strip() in output
+
+    def test_create_fastly_service_with_custom_prefix_ci_env(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'prefix=admin',
+            '-target=module.fastly_custom_prefix',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert """
+    default_host:                                 "ci-admin.domain.com"
+        """.strip() in output
+
+        assert """
+    domain.#:                                     "1"
+    domain.4266294051.comment:                    ""
+    domain.4266294051.name:                       "ci-admin.domain.com"
+        """.strip() in output
+
+        assert """
+Plan: 1 to add, 0 to change, 0 to destroy.
+        """.strip() in output
+
+    def test_create_fastly_service_with_custom_prefix_live_env(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=live',
+            '-var', 'prefix=admin',
+            '-target=module.fastly_custom_prefix',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert """
+    default_host:                                 "admin.domain.com"
+        """.strip() in output
+
+        assert """
+    domain.#:                                     "1"
+    domain.2052375204.comment:                    ""
+    domain.2052375204.name:                       "admin.domain.com"
         """.strip() in output
 
         assert """
