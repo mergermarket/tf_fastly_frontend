@@ -13,6 +13,7 @@ resource "fastly_service_v1" "fastly" {
     name                  = "default backend"
     port                  = 443
     ssl_check_cert        = "true"
+    ssl_cert_hostname     = "${var.env == "live" ? format("%s.", var.prefix) : format("%s-%s.", var.env, var.prefix)}${var.domain_name}"
     connect_timeout       = "${var.connect_timeout}"
     first_byte_timeout    = "${var.first_byte_timeout}"
     between_bytes_timeout = "${var.between_bytes_timeout}"
