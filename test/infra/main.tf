@@ -8,6 +8,15 @@ module "fastly" {
   env             = "${var.env}"
 }
 
+module "fastly_custom_prefix" {
+  source = "../.."
+
+  domain_name     = "${var.domain_name}"
+  backend_address = "${var.backend_address}"
+  env             = "${var.env}"
+  prefix          = "${var.prefix}"
+}
+
 module "fastly_custom_timeouts" {
   source = "../.."
 
@@ -43,6 +52,10 @@ variable "domain_name" {}
 variable "backend_address" {}
 
 variable "env" {}
+
+variable "prefix" {
+  default = "www"
+}
 
 variable "caching" {
   default = "true"

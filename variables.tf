@@ -15,6 +15,12 @@ variable "env" {
 }
 
 # optional variables
+variable "prefix" {
+  type        = "string"
+  description = "Domain prefix"
+  default     = "www"
+}
+
 variable "caching" {
   type        = "string"
   description = "Whether to or not disable caching on Fastly (default: true)"
