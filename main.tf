@@ -2,10 +2,10 @@ resource "fastly_service_v1" "fastly" {
   name = "${var.env}-${var.domain_name}"
 
   domain {
-    name = "${var.env == "live" ? format("%s.", var.prefix) : format("%s-%s.", var.env, var.prefix)}${var.domain_name}"
+    name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
   }
 
-  default_host = "${var.env == "live" ? format("%s.", var.prefix) : format("%s-%s.", var.env, var.prefix)}${var.domain_name}"
+  default_host = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
   default_ttl  = 60
 
   backend {
@@ -79,10 +79,10 @@ resource "fastly_service_v1" "fastly" {
 # resource performing bare-domain redirection to prefix; only for live
 resource "fastly_service_v1" "fastly_bare_domain_redirection" {
   name  = "${var.domain_name}-redirection"
-  count = "${var.env == "live" ? 1 : 0}"
+  count = "${var.env == "live" && var.bare_redirect_domain_name != "" ? 1 : 0}"
 
   domain {
-    name = "${var.domain_name}"
+    name = "${var.bare_redirect_domain_name}"
   }
 
   response_object {
@@ -97,7 +97,7 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     destination       = "http.Location"
     type              = "response"
     action            = "set"
-    source            = "${format("\"https://%s\" + req.url", var.domain_name)}"
+    source            = "\"https://${var.domain_name}\" + req.url"
     request_condition = "all_urls"
   }
 

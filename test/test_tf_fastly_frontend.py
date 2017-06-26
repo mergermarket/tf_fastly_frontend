@@ -24,7 +24,7 @@ class TestTFFastlyFrontend(unittest.TestCase):
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-target=module.fastly',
@@ -54,7 +54,8 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'bare_redirect_domain_name=domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=live',
             '-target=module.fastly',
@@ -82,70 +83,8 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert """
-    header.1405633346.source:                     "\\"https://domain.com\\" + req.url"
-        """.strip() in output # noqa
-
-        assert """
-Plan: 2 to add, 0 to change, 0 to destroy.
-        """.strip() in output
-
-    def test_create_fastly_service_with_custom_prefix_ci_env(self):
-        # Given
-
-        # When
-        output = check_output([
-            'terraform',
-            'plan',
-            '-var', 'domain_name=domain.com',
-            '-var', 'backend_address=1.1.1.1',
-            '-var', 'env=ci',
-            '-var', 'prefix=admin',
-            '-target=module.fastly_custom_prefix',
-            '-no-color',
-            'test/infra'
-        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
-
-        # Then
-        assert """
-    default_host:                                 "ci-admin.domain.com"
-        """.strip() in output
-
-        assert """
-    domain.#:                                     "1"
-    domain.4266294051.comment:                    ""
-    domain.4266294051.name:                       "ci-admin.domain.com"
-        """.strip() in output
-
-        assert """
-Plan: 1 to add, 0 to change, 0 to destroy.
-        """.strip() in output
-
-    def test_create_fastly_service_with_custom_prefix_live_env(self):
-        # Given
-
-        # When
-        output = check_output([
-            'terraform',
-            'plan',
-            '-var', 'domain_name=domain.com',
-            '-var', 'backend_address=1.1.1.1',
-            '-var', 'env=live',
-            '-var', 'prefix=admin',
-            '-target=module.fastly_custom_prefix',
-            '-no-color',
-            'test/infra'
-        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
-
-        # Then
-        assert """
-    default_host:                                 "admin.domain.com"
-        """.strip() in output
-
-        assert """
-    domain.#:                                     "1"
-    domain.2052375204.comment:                    ""
-    domain.2052375204.name:                       "admin.domain.com"
-        """.strip() in output
+    header.3558303576.source:                     "\\"https://www.domain.com\\" + req.url"
+        """.strip() in output, output # noqa
 
         assert """
 Plan: 2 to add, 0 to change, 0 to destroy.
@@ -158,7 +97,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-target=module.fastly',
@@ -190,7 +129,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-no-color',
@@ -221,7 +160,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-no-color',
@@ -260,7 +199,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-no-color',
@@ -290,7 +229,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'caching=false',
             '-var', 'env=ci',
@@ -321,7 +260,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'force_ssl=false',
             '-var', 'env=ci',
@@ -352,7 +291,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         output = check_output([
             'terraform',
             'plan',
-            '-var', 'domain_name=domain.com',
+            '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
             '-var', 'connect_timeout=12345',
@@ -365,8 +304,8 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert """
-    backend.4115911643.between_bytes_timeout:     "31337"
-    backend.4115911643.connect_timeout:           "12345"
-    backend.4115911643.error_threshold:           "0"
-    backend.4115911643.first_byte_timeout:        "54321"
-        """.strip() in output
+    backend.1455815575.between_bytes_timeout:     "31337"
+    backend.1455815575.connect_timeout:           "12345"
+    backend.1455815575.error_threshold:           "0"
+    backend.1455815575.first_byte_timeout:        "54321"
+        """.strip() in output, output

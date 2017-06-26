@@ -6,15 +6,7 @@ module "fastly" {
   domain_name     = "${var.domain_name}"
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
-}
-
-module "fastly_custom_prefix" {
-  source = "../.."
-
-  domain_name     = "${var.domain_name}"
-  backend_address = "${var.backend_address}"
-  env             = "${var.env}"
-  prefix          = "${var.prefix}"
+  bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
 }
 
 module "fastly_custom_timeouts" {
@@ -48,14 +40,13 @@ module "fastly_disable_force_ssl" {
 
 # variables
 variable "domain_name" {}
+variable "bare_redirect_domain_name" {
+  default = ""
+}
 
 variable "backend_address" {}
 
 variable "env" {}
-
-variable "prefix" {
-  default = "www"
-}
 
 variable "caching" {
   default = "true"
