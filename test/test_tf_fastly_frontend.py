@@ -365,8 +365,8 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert """
-    backend.4115911643.between_bytes_timeout:     "31337"
-    backend.4115911643.connect_timeout:           "12345"
-    backend.4115911643.error_threshold:           "0"
-    backend.4115911643.first_byte_timeout:        "54321"
+    backend.1455815575.between_bytes_timeout:     "31337"
+    backend.1455815575.connect_timeout:           "12345"
+    backend.1455815575.error_threshold:           "0"
+    backend.1455815575.first_byte_timeout:        "54321"
         """.strip() in output
