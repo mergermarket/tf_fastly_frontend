@@ -156,7 +156,7 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     destination       = "http.Location"
     type              = "response"
     action            = "set"
-    source            = "\"https://${var.domain_name}\" + req.url"
+    source            = "${format("\"https://%s.%s\" + req.url", var.prefix, var.domain_name)}" 
     request_condition = "all_urls"
   }
 
