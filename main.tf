@@ -85,6 +85,16 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     name = "${var.domain_name}"
   }
 
+  backend {
+    address               = "${var.backend_address}"
+    name                  = "default backend"
+    port                  = 443
+    ssl_check_cert        = "false"
+    connect_timeout       = "${var.connect_timeout}"
+    first_byte_timeout    = "${var.first_byte_timeout}"
+    between_bytes_timeout = "${var.between_bytes_timeout}"
+  }
+
   response_object {
     name              = "redirect_bare_domain_to_prefix"
     status            = 301
