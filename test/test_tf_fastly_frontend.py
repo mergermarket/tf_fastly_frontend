@@ -404,7 +404,6 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
 
-
     def test_503_error_condition(self):
         # When
         output = check_output([

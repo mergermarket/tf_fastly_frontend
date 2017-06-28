@@ -50,6 +50,7 @@ module "fastly_ssl_cert_hostname" {
 
 # variables
 variable "domain_name" {}
+
 variable "bare_redirect_domain_name" {
   default = ""
 }
