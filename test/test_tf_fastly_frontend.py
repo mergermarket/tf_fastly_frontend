@@ -304,3 +304,62 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     backend.1455815575.error_threshold:           "0"
     backend.1455815575.first_byte_timeout:        "54321"
         """.strip() in output
+
+    def test_502_error_condition_page(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_502=<html>502</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # then
+        assert """
+        response_object.1893003975.content:           "<html>502</html>"
+        """.strip() in output
+
+    def test_503_error_condition_page(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_503=<html>503</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # then
+        assert """
+        response_object.4161313478.content:           "<html>503</html>"
+        """.strip() in output
+
+    def test_502_error_condition(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_502=<html>502</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert """
+    condition.2402005032.type:                    "CACHE"
+    condition.3528932171.name:                    "response-502-condition"
+    condition.3528932171.priority:                "5"
+    condition.3528932171.statement:               "beresp.status == 502"
+        """.strip() in output # noqa
