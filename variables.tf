@@ -4,6 +4,12 @@ variable "domain_name" {
   description = "Domain name to use for this Fastly configuration"
 }
 
+variable "bare_redirect_domain_name" {
+  type = "string"
+  default = ""
+  description = "If set then an additional service will be created to redirect the zone apex (bare domain) to the domain - i.e. add the www."
+}
+
 variable "backend_address" {
   type        = "string"
   description = "Backend address to forward all requests to"
@@ -12,13 +18,6 @@ variable "backend_address" {
 variable "env" {
   type        = "string"
   description = "Environment name"
-}
-
-# optional variables
-variable "prefix" {
-  type        = "string"
-  description = "Domain prefix"
-  default     = "www"
 }
 
 variable "caching" {
