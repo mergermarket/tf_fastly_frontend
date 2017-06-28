@@ -170,7 +170,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # then
         assert """
-    response_object.#:                            "1"
+    response_object.#:                            "3"
     response_object.1851546840.cache_condition:   ""
     response_object.1851546840.content:           "User-agent: *\\nDisallow: /\\n"
     response_object.1851546840.content_type:      "text/plain"
@@ -181,11 +181,6 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output # noqa
 
         assert """
-    condition.#:                                  "2"
-    condition.212367000.name:                     "all_urls"
-    condition.212367000.priority:                 "10"
-    condition.212367000.statement:                "req.url ~ \\".*\\""
-    condition.212367000.type:                     "REQUEST"
     condition.820439921.name:                     "override-robots.txt-condition"
     condition.820439921.priority:                 "5"
     condition.820439921.statement:                "req.url ~ \\"^/robots.txt\\""
