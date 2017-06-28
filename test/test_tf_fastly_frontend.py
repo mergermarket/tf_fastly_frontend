@@ -308,4 +308,4 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     backend.1455815575.connect_timeout:           "12345"
     backend.1455815575.error_threshold:           "0"
     backend.1455815575.first_byte_timeout:        "54321"
-        """.strip() in output, output
+        """.strip() in output
