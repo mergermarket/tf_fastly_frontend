@@ -16,8 +16,11 @@ to to match it:
     # prints "world"
 
 """
+
+
 def template_to_re(t):
     seen = dict()
+
     def pattern(placeholder, open_curly, close_curly, text):
         if text is not None:
             return re.escape(text)
@@ -35,6 +38,7 @@ def template_to_re(t):
         pattern(*match.groups())
         for match in re.finditer(r'{([\w_]+)}|(\{\{)|(\}\})|([^{}]+)', t)
     ])
+
 
 class TestTFFastlyFrontend(unittest.TestCase):
 
@@ -392,4 +396,24 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     condition.{ident2}.name:                    "response-502-condition"
     condition.{ident2}.priority:                "5"
     condition.{ident2}.statement:               "beresp.status == 502"
+        """.strip()), output) # noqa
+
+    def test_503_error_condition(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_503=<html>503</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+    condition.{ident2}.name:                    "response-503-condition"
+    condition.{ident2}.priority:                "5"
+    condition.{ident2}.statement:               "beresp.status == 503"
         """.strip()), output) # noqa
