@@ -5,8 +5,8 @@ variable "domain_name" {
 }
 
 variable "bare_redirect_domain_name" {
-  type = "string"
-  default = ""
+  type        = "string"
+  default     = ""
   description = "If set then an additional service will be created to redirect the zone apex (bare domain) to the domain - i.e. add the www."
 }
 
@@ -51,9 +51,10 @@ variable "between_bytes_timeout" {
 }
 
 variable "error_response_503" {
-  type         = "string"
+  type        = "string"
   description = "The html error document to send when we get a service unavailable from the backend."
-  default       = <<EOF
+
+  default = <<EOF
 <!DOCTYPE html>
 <html>
   <head>
@@ -67,13 +68,13 @@ variable "error_response_503" {
   </body>
 </html>
 EOF
-
 }
 
 variable "error_response_502" {
-  type         = "string"
+  type        = "string"
   description = "The html error document to send when we get a bad gateway from the backend."
-  default       = <<EOF
+
+  default = <<EOF
 <!DOCTYPE html>
 <html>
   <head>
@@ -87,5 +88,4 @@ variable "error_response_502" {
   </body>
 </html>
 EOF
-
 }

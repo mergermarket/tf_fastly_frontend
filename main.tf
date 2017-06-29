@@ -59,10 +59,10 @@ resource "fastly_service_v1" "fastly" {
 
   # 503 error handling
   response_object {
-    name            = "error-response-503",
-    status          = 503,
-    response        = "Service Unavailable",
-    content         = "${var.error_response_503}",
+    name            = "error-response-503"
+    status          = 503
+    response        = "Service Unavailable"
+    content         = "${var.error_response_503}"
     content_type    = "text/html"
     cache_condition = "response-503-condition"
   }
@@ -76,10 +76,10 @@ resource "fastly_service_v1" "fastly" {
 
   # 502 error handling
   response_object {
-    name            = "error-response-502",
-    status          = 502,
-    response        = "Bad Gateway",
-    content         = "${var.error_response_502}",
+    name            = "error-response-502"
+    status          = 502
+    response        = "Bad Gateway"
+    content         = "${var.error_response_502}"
     content_type    = "text/html"
     cache_condition = "response-502-condition"
   }
