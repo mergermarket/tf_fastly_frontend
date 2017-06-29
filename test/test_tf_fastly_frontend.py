@@ -1,8 +1,43 @@
 import unittest
 import os
+import re
 from subprocess import check_call, check_output
 
 cwd = os.getcwd()
+
+"""
+Takes a template (i.e. what you'd call `.format(...)` on, and returns a regex
+to to match it:
+
+    print(re.match(
+        template_to_re("hello {name}"),
+        "hello world"
+    ).group("name"))
+    # prints "world"
+
+"""
+
+
+def template_to_re(t):
+    seen = dict()
+
+    def pattern(placeholder, open_curly, close_curly, text):
+        if text is not None:
+            return re.escape(text)
+        elif open_curly is not None:
+            return r'\{'
+        elif close_curly is not None:
+            return r'\}'
+        elif seen.get(placeholder):
+            return '(?P={})'.format(placeholder)
+        else:
+            seen[placeholder] = True
+            return '(?P<{}>.*?)'.format(placeholder)
+
+    return "".join([
+        pattern(*match.groups())
+        for match in re.finditer(r'{([\w_]+)}|(\{\{)|(\}\})|([^{}]+)', t)
+    ])
 
 
 class TestTFFastlyFrontend(unittest.TestCase):
@@ -37,11 +72,11 @@ class TestTFFastlyFrontend(unittest.TestCase):
     default_host:                                 "ci-www.domain.com"
         """.strip() in output
 
-        assert """
+        assert re.search(template_to_re("""
     domain.#:                                     "1"
-    domain.1665706793.comment:                    ""
-    domain.1665706793.name:                       "ci-www.domain.com"
-        """.strip() in output
+    domain.{ident}.comment:                    ""
+    domain.{ident}.name:                       "ci-www.domain.com"
+        """.strip()), output)
 
         assert """
 Plan: 1 to add, 0 to change, 0 to destroy.
@@ -72,19 +107,19 @@ Plan: 1 to add, 0 to change, 0 to destroy.
     default_host:                                 "www.domain.com"
         """.strip() in output
 
-        assert """
+        assert re.search(template_to_re("""
     domain.#:                                     "1"
-    domain.2448670921.comment:                    ""
-    domain.2448670921.name:                       "www.domain.com"
-        """.strip() in output
+    domain.{ident}.comment:                    ""
+    domain.{ident}.name:                       "www.domain.com"
+        """.strip()), output)
 
         assert """
 + module.fastly.fastly_service_v1.fastly_bare_domain_redirection
         """.strip() in output
 
-        assert """
-    header.3558303576.source:                     "\\"https://www.domain.com\\" + req.url"
-        """.strip() in output, output # noqa
+        assert re.search(template_to_re("""
+    header.{ident}.source:                     "\\"https://www.domain.com\\" + req.url"
+        """.strip()), output) # noqa
 
         assert """
 Plan: 2 to add, 0 to change, 0 to destroy.
@@ -106,21 +141,21 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # Then
-        assert """
+        assert re.search(template_to_re("""
     header.#:                                     "2"
-    header.2180504608.action:                     "delete"
-    header.2180504608.cache_condition:            ""
-    header.2180504608.destination:                "http.X-Powered-By"
-    header.2180504608.ignore_if_set:              "false"
-    header.2180504608.name:                       "Remove X-Powered-By header"
-    header.2180504608.priority:                   "100"
-    header.2180504608.regex:                      "<computed>"
-    header.2180504608.request_condition:          ""
-    header.2180504608.response_condition:         ""
-    header.2180504608.source:                     "<computed>"
-    header.2180504608.substitution:               "<computed>"
-    header.2180504608.type:                       "cache"
-        """.strip() in output
+    header.{ident}.action:                     "delete"
+    header.{ident}.cache_condition:            ""
+    header.{ident}.destination:                "http.X-Powered-By"
+    header.{ident}.ignore_if_set:              "false"
+    header.{ident}.name:                       "Remove X-Powered-By header"
+    header.{ident}.priority:                   "100"
+    header.{ident}.regex:                      "<computed>"
+    header.{ident}.request_condition:          ""
+    header.{ident}.response_condition:         ""
+    header.{ident}.source:                     "<computed>"
+    header.{ident}.substitution:               "<computed>"
+    header.{ident}.type:                       "cache"
+        """.strip()), output)
 
     def test_obfuscate_server_header(self):
         # Given
@@ -138,20 +173,20 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # Then
-        assert """
-    header.3700817666.action:                     "set"
-    header.3700817666.cache_condition:            ""
-    header.3700817666.destination:                "http.Server"
-    header.3700817666.ignore_if_set:              "false"
-    header.3700817666.name:                       "Obfuscate Server header"
-    header.3700817666.priority:                   "100"
-    header.3700817666.regex:                      "<computed>"
-    header.3700817666.request_condition:          ""
-    header.3700817666.response_condition:         ""
-    header.3700817666.source:                     "\\"LHC\\""
-    header.3700817666.substitution:               "<computed>"
-    header.3700817666.type:                       "cache"
-        """.strip() in output
+        assert re.search(template_to_re("""
+    header.{ident}.action:                     "set"
+    header.{ident}.cache_condition:            ""
+    header.{ident}.destination:                "http.Server"
+    header.{ident}.ignore_if_set:              "false"
+    header.{ident}.name:                       "Obfuscate Server header"
+    header.{ident}.priority:                   "100"
+    header.{ident}.regex:                      "<computed>"
+    header.{ident}.request_condition:          ""
+    header.{ident}.response_condition:         ""
+    header.{ident}.source:                     "\\"LHC\\""
+    header.{ident}.substitution:               "<computed>"
+    header.{ident}.type:                       "cache"
+        """.strip()), output)
 
     def test_override_robots_for_non_live_environments(self):
         # given
@@ -169,28 +204,22 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # then
-        assert """
-    response_object.#:                            "1"
-    response_object.1851546840.cache_condition:   ""
-    response_object.1851546840.content:           "User-agent: *\\nDisallow: /\\n"
-    response_object.1851546840.content_type:      "text/plain"
-    response_object.1851546840.name:              "override-robots.txt"
-    response_object.1851546840.request_condition: "override-robots.txt-condition"
-    response_object.1851546840.response:          "OK"
-    response_object.1851546840.status:            "200"
-        """.strip() in output # noqa
+        assert re.search(template_to_re("""
+    response_object.{ident}.cache_condition:   ""
+    response_object.{ident}.content:           "User-agent: *\\nDisallow: /\\n"
+    response_object.{ident}.content_type:      "text/plain"
+    response_object.{ident}.name:              "override-robots.txt"
+    response_object.{ident}.request_condition: "override-robots.txt-condition"
+    response_object.{ident}.response:          "OK"
+    response_object.{ident}.status:            "200"
+        """.strip()), output) # noqa
 
-        assert """
-    condition.#:                                  "2"
-    condition.212367000.name:                     "all_urls"
-    condition.212367000.priority:                 "10"
-    condition.212367000.statement:                "req.url ~ \\".*\\""
-    condition.212367000.type:                     "REQUEST"
-    condition.820439921.name:                     "override-robots.txt-condition"
-    condition.820439921.priority:                 "5"
-    condition.820439921.statement:                "req.url ~ \\"^/robots.txt\\""
-    condition.820439921.type:                     "REQUEST"
-        """.strip() in output # noqa
+        assert re.search(template_to_re("""
+    condition.{ident}.name:                     "override-robots.txt-condition"
+    condition.{ident}.priority:                 "5"
+    condition.{ident}.statement:                "req.url ~ \\"^/robots.txt\\""
+    condition.{ident}.type:                     "REQUEST"
+        """.strip()), output) # noqa
 
     def test_force_ssl_and_caching_enabled_by_default(self):
         # given
@@ -208,21 +237,21 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # then
-        assert """
+        assert re.search(template_to_re("""
     request_setting.#:                            "1"
-    request_setting.4061384956.action:            ""
-    request_setting.4061384956.bypass_busy_wait:  ""
-    request_setting.4061384956.default_host:      ""
-    request_setting.4061384956.force_miss:        "false"
-    request_setting.4061384956.force_ssl:         "true"
-    request_setting.4061384956.geo_headers:       ""
-    request_setting.4061384956.hash_keys:         ""
-    request_setting.4061384956.max_stale_age:     "60"
-    request_setting.4061384956.name:              "disable caching"
-    request_setting.4061384956.request_condition: "all_urls"
-    request_setting.4061384956.timer_support:     ""
-    request_setting.4061384956.xff:               "append"
-        """.strip() in output # noqa
+    request_setting.{ident}.action:            ""
+    request_setting.{ident}.bypass_busy_wait:  ""
+    request_setting.{ident}.default_host:      ""
+    request_setting.{ident}.force_miss:        "false"
+    request_setting.{ident}.force_ssl:         "true"
+    request_setting.{ident}.geo_headers:       ""
+    request_setting.{ident}.hash_keys:         ""
+    request_setting.{ident}.max_stale_age:     "60"
+    request_setting.{ident}.name:              "disable caching"
+    request_setting.{ident}.request_condition: "all_urls"
+    request_setting.{ident}.timer_support:     ""
+    request_setting.{ident}.xff:               "append"
+        """.strip()), output) # noqa
 
     def test_disable_caching(self):
         # when
@@ -239,21 +268,21 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # then
-        assert """
+        assert re.search(template_to_re("""
     request_setting.#:                            "1"
-    request_setting.2432135539.action:            ""
-    request_setting.2432135539.bypass_busy_wait:  ""
-    request_setting.2432135539.default_host:      ""
-    request_setting.2432135539.force_miss:        "true"
-    request_setting.2432135539.force_ssl:         "true"
-    request_setting.2432135539.geo_headers:       ""
-    request_setting.2432135539.hash_keys:         ""
-    request_setting.2432135539.max_stale_age:     "60"
-    request_setting.2432135539.name:              "disable caching"
-    request_setting.2432135539.request_condition: "all_urls"
-    request_setting.2432135539.timer_support:     ""
-    request_setting.2432135539.xff:               "append"
-        """.strip() in output # noqa
+    request_setting.{ident}.action:            ""
+    request_setting.{ident}.bypass_busy_wait:  ""
+    request_setting.{ident}.default_host:      ""
+    request_setting.{ident}.force_miss:        "true"
+    request_setting.{ident}.force_ssl:         "true"
+    request_setting.{ident}.geo_headers:       ""
+    request_setting.{ident}.hash_keys:         ""
+    request_setting.{ident}.max_stale_age:     "60"
+    request_setting.{ident}.name:              "disable caching"
+    request_setting.{ident}.request_condition: "all_urls"
+    request_setting.{ident}.timer_support:     ""
+    request_setting.{ident}.xff:               "append"
+        """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
         # when
@@ -270,21 +299,21 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # then
-        assert """
+        assert re.search(template_to_re("""
     request_setting.#:                            "1"
-    request_setting.2559674034.action:            ""
-    request_setting.2559674034.bypass_busy_wait:  ""
-    request_setting.2559674034.default_host:      ""
-    request_setting.2559674034.force_miss:        "false"
-    request_setting.2559674034.force_ssl:         "false"
-    request_setting.2559674034.geo_headers:       ""
-    request_setting.2559674034.hash_keys:         ""
-    request_setting.2559674034.max_stale_age:     "60"
-    request_setting.2559674034.name:              "disable caching"
-    request_setting.2559674034.request_condition: "all_urls"
-    request_setting.2559674034.timer_support:     ""
-    request_setting.2559674034.xff:               "append"
-        """.strip() in output # noqa
+    request_setting.{ident}.action:            ""
+    request_setting.{ident}.bypass_busy_wait:  ""
+    request_setting.{ident}.default_host:      ""
+    request_setting.{ident}.force_miss:        "false"
+    request_setting.{ident}.force_ssl:         "false"
+    request_setting.{ident}.geo_headers:       ""
+    request_setting.{ident}.hash_keys:         ""
+    request_setting.{ident}.max_stale_age:     "60"
+    request_setting.{ident}.name:              "disable caching"
+    request_setting.{ident}.request_condition: "all_urls"
+    request_setting.{ident}.timer_support:     ""
+    request_setting.{ident}.xff:               "append"
+        """.strip()), output) # noqa
 
     def test_custom_timeouts(self):
         # When
@@ -303,9 +332,88 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # Then
-        assert """
-    backend.1455815575.between_bytes_timeout:     "31337"
-    backend.1455815575.connect_timeout:           "12345"
-    backend.1455815575.error_threshold:           "0"
-    backend.1455815575.first_byte_timeout:        "54321"
-        """.strip() in output
+        assert re.search(template_to_re("""
+    backend.{ident}.between_bytes_timeout:     "31337"
+    backend.{ident}.connect_timeout:           "12345"
+    backend.{ident}.error_threshold:           "0"
+    backend.{ident}.first_byte_timeout:        "54321"
+        """.strip()), output)
+
+    def test_502_error_condition_page(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_502=<html>502</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # then
+        assert re.search(template_to_re("""
+    response_object.{ident}.content:           "<html>502</html>"
+        """.strip()), output)
+
+    def test_503_error_condition_page(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_503=<html>503</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # then
+        assert re.search(template_to_re("""
+    response_object.{ident}.content:           "<html>503</html>"
+        """.strip()), output)
+
+    def test_502_error_condition(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_502=<html>502</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+    condition.{ident1}.type:                    "CACHE"
+    condition.{ident2}.name:                    "response-502-condition"
+    condition.{ident2}.priority:                "5"
+    condition.{ident2}.statement:               "beresp.status == 502"
+        """.strip()), output) # noqa
+
+    def test_503_error_condition(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'error_response_503=<html>503</html>',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+    condition.{ident2}.name:                    "response-503-condition"
+    condition.{ident2}.priority:                "5"
+    condition.{ident2}.statement:               "beresp.status == 503"
+        """.strip()), output) # noqa

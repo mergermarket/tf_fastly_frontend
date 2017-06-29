@@ -3,10 +3,12 @@
 module "fastly" {
   source = "../.."
 
-  domain_name     = "${var.domain_name}"
-  backend_address = "${var.backend_address}"
-  env             = "${var.env}"
+  domain_name               = "${var.domain_name}"
+  backend_address           = "${var.backend_address}"
+  env                       = "${var.env}"
   bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
+  error_response_502        = "${var.error_response_502}"
+  error_response_503        = "${var.error_response_503}"
 }
 
 module "fastly_custom_timeouts" {
@@ -40,6 +42,7 @@ module "fastly_disable_force_ssl" {
 
 # variables
 variable "domain_name" {}
+
 variable "bare_redirect_domain_name" {
   default = ""
 }
@@ -57,13 +60,21 @@ variable "force_ssl" {
 }
 
 variable "connect_timeout" {
-  default = ""
+  default = 123
 }
 
 variable "first_byte_timeout" {
-  default = ""
+  default = 456
 }
 
 variable "between_bytes_timeout" {
-  default = ""
+  default = 789
+}
+
+variable "error_response_503" {
+  default = "abc"
+}
+
+variable "error_response_502" {
+  default = "cba"
 }

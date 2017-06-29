@@ -57,6 +57,40 @@ resource "fastly_service_v1" "fastly" {
     statement = "req.url ${var.env == "live" ? "!~ \".*\"" : "~ \"^/robots.txt\""}"
   }
 
+  # 503 error handling
+  response_object {
+    name            = "error-response-503"
+    status          = 503
+    response        = "Service Unavailable"
+    content         = "${var.error_response_503}"
+    content_type    = "text/html"
+    cache_condition = "response-503-condition"
+  }
+
+  condition {
+    name      = "response-503-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "beresp.status == 503"
+  }
+
+  # 502 error handling
+  response_object {
+    name            = "error-response-502"
+    status          = 502
+    response        = "Bad Gateway"
+    content         = "${var.error_response_502}"
+    content_type    = "text/html"
+    cache_condition = "response-502-condition"
+  }
+
+  condition {
+    name      = "response-502-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "beresp.status == 502"
+  }
+
   # Sanitise HTTP headers
   header {
     name        = "Remove X-Powered-By header"
