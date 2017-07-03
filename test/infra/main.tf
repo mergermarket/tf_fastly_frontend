@@ -90,3 +90,7 @@ variable "proxy_error_response" {
 variable "ssl_cert_hostname" {
   default = ""
 }
+
+variable "ssl_cert_hostname" {
+  default = ""
+}
