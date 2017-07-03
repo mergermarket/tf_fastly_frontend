@@ -7,15 +7,15 @@ This module creates Fastly Frontend including some conditions, like:
 
 Also, some HTTP headers obfuscation will be configured (http.Server, etc.)
 
-**NOTE:** If you want to use HTTPS you need to set up SSL Certification beforehand 
+**NOTE:** If you want to use HTTPS you need to set up SSL Certification beforehand
 
 Module Input Variables
 ----------------------
 
-- `domain_name` - (string) - **REQUIRED** - Domain name to serve as entry points for your service
+- `domain_name` - (string) - **REQUIRED** - The full domain name for your website in live, including any prefix (e.g. `www.my-site.com`).
+- `bare_redirect_domain_name` - (string) - If set, then a service will be created in live to redirect this bare domain to the prefixed version - for example you might set this value to `my-site.com` in order to redirect users to `www.my-site.com`.
 - `backend_address` - (string) - **REQUIRED** - Backend address to service requests for your domains
-- `env` - (string) - **REQUIRED** - Environment name - used to build name of resources and conditionally enable/disable certain features of the module
-- `prefix` - (string) - Domain prefix (default: `www`)
+- `env` - (string) - **REQUIRED** - Environment name - for non-live environments, will be prefixed with a hyphen onto the start of the domain name. used to build name of resources and conditionally enable/disable certain features of the module
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
 - `connect_timeout` - (string) - How long to wait for a timeout in milliseconds (default: `5000`)
