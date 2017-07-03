@@ -7,7 +7,7 @@ This module creates Fastly Frontend including some conditions, like:
 
 Also, some HTTP headers obfuscation will be configured (http.Server, etc.)
 
-**NOTE:** If you want to use HTTPS you need to set up SSL Certification beforehand 
+**NOTE:** If you want to use HTTPS you need to set up SSL Certification beforehand
 
 Module Input Variables
 ----------------------
@@ -18,6 +18,8 @@ Module Input Variables
 - `prefix` - (string) - Domain prefix (default: `www`)
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
+- `ssl_cert_check` - (bool) - Check the backend cert is valid - warning disabling this makes you vulnerable to a man-in-the-middle imporsonating your backend (default `true`).
+- `ssl_cert_hostname` - (string) - The hostname to validate the certificate presented by the backend against (default `""`).
 - `connect_timeout` - (string) - How long to wait for a timeout in milliseconds (default: `5000`)
 - `first_byte_timeout` - (string) - How long to wait for the first bytes in milliseconds (default: `60000`)
 - `between_bytes_timeout` - (string) - How long to wait between bytes in milliseconds (default: `30000`)
