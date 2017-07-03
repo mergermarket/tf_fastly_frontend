@@ -50,6 +50,18 @@ variable "between_bytes_timeout" {
   default     = 30000
 }
 
+variable "ssl_cert_check" {
+  type        = "string"
+  description = "Should the backend SSL cert be checked - warning turning this off may reduce security."
+  default     = "true"
+}
+
+variable "ssl_cert_hostname" {
+  type        = "string"
+  description = "The hostname to validate the certificate presented by the backend against."
+  default     = ""
+}
+
 variable "error_response_503" {
   type        = "string"
   description = "The html error document to send when we get a service unavailable from the backend."

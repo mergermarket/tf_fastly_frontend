@@ -40,6 +40,15 @@ module "fastly_disable_force_ssl" {
   force_ssl       = "${var.force_ssl}"
 }
 
+module "fastly_ssl_cert_hostname" {
+  source = "../.."
+
+  domain_name       = "${var.domain_name}"
+  backend_address   = "${var.backend_address}"
+  env               = "${var.env}"
+  ssl_cert_hostname = "${var.ssl_cert_hostname}"
+}
+
 # variables
 variable "domain_name" {}
 
@@ -77,4 +86,8 @@ variable "error_response_503" {
 
 variable "error_response_502" {
   default = "cba"
+}
+
+variable "ssl_cert_hostname" {
+  default = ""
 }

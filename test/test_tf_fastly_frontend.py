@@ -417,3 +417,21 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     condition.{ident2}.priority:                "5"
     condition.{ident2}.statement:               "beresp.status == 503"
         """.strip()), output) # noqa
+
+    def test_ssl_cert_hostname(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'ssl_cert_hostname=test-hostname',
+            '-target=module.fastly_ssl_cert_hostname',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+   backend.{ident}.ssl_cert_hostname:         "test-hostname"
+        """.strip()), output) # noqa
