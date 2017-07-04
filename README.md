@@ -23,6 +23,8 @@ Module Input Variables
 - `connect_timeout` - (string) - How long to wait for a timeout in milliseconds (default: `5000`)
 - `first_byte_timeout` - (string) - How long to wait for the first bytes in milliseconds (default: `60000`)
 - `between_bytes_timeout` - (string) - How long to wait between bytes in milliseconds (default: `30000`)
+- `error_response_502` - (string) - The html error document to send when we get a bad gateway from the backend.
+- `error_response_503` - (string) - The html error document to send when we get a service unavailable from the backend.
 
 Usage
 -----
