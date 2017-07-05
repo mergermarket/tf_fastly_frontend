@@ -9,6 +9,8 @@ This module creates Fastly Frontend including some conditions, like:
 
 Also, some HTTP headers obfuscation will be configured (http.Server, etc.)
 
+Request logging is deployed by default for all Fastly configurations - Fastly uses Real-Time Logging feature to push logs directly to Logentries. Make sure you pass `le_logset_id` and set `LOGENTRIES_ACCOUNT_KEY` environment variable in order for this module to work.
+
 **NOTE:** If you want to use HTTPS you need to set up SSL Certification beforehand
 
 Module Input Variables
@@ -18,6 +20,7 @@ Module Input Variables
 - `bare_redirect_domain_name` - (string) - If set, then a service will be created in live to redirect this bare domain to the prefixed version - for example you might set this value to `my-site.com` in order to redirect users to `www.my-site.com`.
 - `backend_address` - (string) - **REQUIRED** - Backend address to service requests for your domains
 - `env` - (string) - **REQUIRED** - Environment name - for non-live environments, will be prefixed with a hyphen onto the start of the domain name. used to build name of resources and conditionally enable/disable certain features of the module
+- `le_logset_id` - (string) - **REQUIRED** - Logentries Logset ID under which Logs will be sent to (provided by platform config)
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
 - `ssl_cert_check` - (bool) - Check the backend cert is valid - warning disabling this makes you vulnerable to a man-in-the-middle imporsonating your backend (default `true`).
@@ -34,8 +37,9 @@ Usage
 module "fastly" {
   source = "github.com/mergermarket/tf_fastly_frontend"
 
-  domain_name     = "domain.com"
-  backend_address = "aws-alb-address.com"
-  env             = "ci"
+  domain_name         = "domain.com"
+  backend_address     = "aws-alb-address.com"
+  env                 = "ci"
+  le_logset_id        = "aaaa-bbbb-ccc-ddd"
 }
 ```

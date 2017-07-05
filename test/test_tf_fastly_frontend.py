@@ -79,8 +79,45 @@ class TestTFFastlyFrontend(unittest.TestCase):
         """.strip()), output)
 
         assert """
-Plan: 1 to add, 0 to change, 0 to destroy.
+Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
+
+    def test_fastly_logging_config(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      logentries.#:                                 "1"
+      logentries.~{ident}.format:                "%h %l %u %t %r %>s"
+      logentries.~{ident}.name:                  "ci-www.domain.com"
+      logentries.~{ident}.port:                  "20000"
+      logentries.~{ident}.response_condition:    ""
+        """.strip()), output) # noqa
+
+        assert re.search(template_to_re("""
+      logentries.~{ident}.use_tls:               "true"
+        """.strip()), output) # noqa
+
+        assert re.search(template_to_re("""
+  + module.fastly.logentries_log.logs
+      logset_id:        "123"
+      name:             "ci-www.domain.com"
+      retention_period: "ACCOUNT_DEFAULT"
+      source:           "token"
+      token:            "<computed>"
+        """.strip()), output) # noqa
 
     def test_create_fastly_service_in_live_creates_redirection(self):
         # Given
@@ -122,7 +159,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert """
-Plan: 2 to add, 0 to change, 0 to destroy.
+Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
     def test_delete_x_powered_by_header(self):
