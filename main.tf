@@ -108,7 +108,21 @@ resource "fastly_service_v1" "fastly" {
     source      = "\"LHC\""
   }
 
+  vcl {
+    name    = "custom_vcl"
+    content = "${data.template_file.custom_vcl.rendered}"
+    main    = true
+  }
+
   force_destroy = true
+}
+
+data "template_file" "custom_vcl" {
+  template = "${file("${path.module}/custom.vcl")}"
+
+  vars {
+    error_response_502 = "${var.error_response_502}"
+  }
 }
 
 # resource performing bare-domain redirection to prefix; only for live

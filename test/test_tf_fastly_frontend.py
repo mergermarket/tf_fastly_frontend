@@ -398,6 +398,13 @@ Plan: 2 to add, 0 to change, 0 to destroy.
     condition.{ident2}.statement:               "beresp.status == 502"
         """.strip()), output) # noqa
 
+        assert re.search(template_to_re("""
+    vcl.{ident}.content:                        "3dbdb5b8ed8816370d0b79075e972079c8bfa103"
+    vcl.{ident}.main:                           "true"
+    vcl.{ident}.name:                           "custom_vcl"
+        """.strip()), output) # noqa
+
+
     def test_503_error_condition(self):
         # When
         output = check_output([
