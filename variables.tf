@@ -84,7 +84,7 @@ EOF
 
 variable "error_response_502" {
   type        = "string"
-  description = "The html error document to send when we get a bad gateway from the backend."
+  description = "The html error document to send when we get a bad gateway from the backend, or when there is no response from the backend."
 
   default = <<EOF
 <!DOCTYPE html>
@@ -101,3 +101,4 @@ variable "error_response_502" {
 </html>
 EOF
 }
+
