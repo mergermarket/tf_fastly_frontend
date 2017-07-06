@@ -347,7 +347,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
-            '-var', 'error_response_502=<html>502</html>',
+            '-var', 'proxy_error_response=<html>error</html>',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -355,7 +355,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    response_object.{ident}.content:           "<html>502</html>"
+    response_object.{ident}.content:           "<html>error</html>"
         """.strip()), output)
 
     def test_503_error_condition_page(self):
@@ -366,7 +366,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
-            '-var', 'error_response_503=<html>503</html>',
+            '-var', 'proxy_error_response=<html>error</html>',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -374,7 +374,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    response_object.{ident}.content:           "<html>503</html>"
+    response_object.{ident}.content:           "<html>error</html>"
         """.strip()), output)
 
     def test_502_error_condition(self):
@@ -385,7 +385,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
-            '-var', 'error_response_502=<html>502</html>',
+            '-var', 'proxy_error_response=<html>error</html>',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -399,9 +399,9 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-    vcl.{ident}.content:                        "3dbdb5b8ed8816370d0b79075e972079c8bfa103"
-    vcl.{ident}.main:                           "true"
-    vcl.{ident}.name:                           "custom_vcl"
+    vcl.{ident}.content:                       "81d77771d4a92fc470d5e23857dff9ddc0df4b5f"
+    vcl.{ident}.main:                          "true"
+    vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
 
 
@@ -413,7 +413,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
-            '-var', 'error_response_503=<html>503</html>',
+            '-var', 'proxy_error_response=<html>error</html>',
             '-target=module.fastly',
             '-no-color',
             'test/infra'

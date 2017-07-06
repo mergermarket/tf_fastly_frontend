@@ -62,38 +62,18 @@ variable "ssl_cert_hostname" {
   default     = ""
 }
 
-variable "error_response_503" {
+variable "proxy_error_response" {
   type        = "string"
-  description = "The html error document to send when we get a service unavailable from the backend."
+  description = "The html error document to send for a proxy error - 502/503 from backend, or no response from backend at all."
 
   default = <<EOF
 <!DOCTYPE html>
 <html>
   <head>
-    <title>503 Service Unavailable</title>
+    <title>Service Unavailable</title>
   </head>
   <body>
-    <h1>Service Unavailable (503)</h1>
-    <p>
-      The site you requested is currently unavailable.
-    </p>
-  </body>
-</html>
-EOF
-}
-
-variable "error_response_502" {
-  type        = "string"
-  description = "The html error document to send when we get a bad gateway from the backend, or when there is no response from the backend."
-
-  default = <<EOF
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>502 Bad Gateway</title>
-  </head>
-  <body>
-    <h1>Bad Gateway (502)</h1>
+    <h1>Service Unavailable</h1>
     <p>
       The site you requested is currently unavailable.
     </p>
