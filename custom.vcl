@@ -75,7 +75,7 @@ sub vcl_error {
 
  /* handle 5XXs*/
  if (obj.status >= 500 && obj.status < 600) {
-   synthetic {"${error_response_502}"};
+   synthetic {"${proxy_error_response}"};
    return(deliver);
  }
 }

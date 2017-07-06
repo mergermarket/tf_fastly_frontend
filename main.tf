@@ -63,7 +63,7 @@ resource "fastly_service_v1" "fastly" {
     name            = "error-response-503"
     status          = 503
     response        = "Service Unavailable"
-    content         = "${var.error_response_503}"
+    content         = "${var.proxy_error_response}"
     content_type    = "text/html"
     cache_condition = "response-503-condition"
   }
@@ -80,7 +80,7 @@ resource "fastly_service_v1" "fastly" {
     name            = "error-response-502"
     status          = 502
     response        = "Bad Gateway"
-    content         = "${var.error_response_502}"
+    content         = "${var.proxy_error_response}"
     content_type    = "text/html"
     cache_condition = "response-502-condition"
   }
@@ -121,7 +121,7 @@ data "template_file" "custom_vcl" {
   template = "${file("${path.module}/custom.vcl")}"
 
   vars {
-    error_response_502 = "${var.error_response_502}"
+    proxy_error_response = "${var.proxy_error_response}"
   }
 }
 

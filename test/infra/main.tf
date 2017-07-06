@@ -7,8 +7,7 @@ module "fastly" {
   backend_address           = "${var.backend_address}"
   env                       = "${var.env}"
   bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
-  error_response_502        = "${var.error_response_502}"
-  error_response_503        = "${var.error_response_503}"
+  proxy_error_response      = "${var.proxy_error_response}"
 }
 
 module "fastly_custom_timeouts" {
@@ -80,12 +79,8 @@ variable "between_bytes_timeout" {
   default = 789
 }
 
-variable "error_response_503" {
+variable "proxy_error_response" {
   default = "abc"
-}
-
-variable "error_response_502" {
-  default = "cba"
 }
 
 variable "ssl_cert_hostname" {
