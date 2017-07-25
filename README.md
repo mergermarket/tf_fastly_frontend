@@ -30,7 +30,7 @@ Usage
 
 ```hcl
 module "fastly" {
-  source = "../.."
+  source = "github.com/mergermarket/tf_fastly_frontend"
 
   domain_name     = "domain.com"
   backend_address = "aws-alb-address.com"
