@@ -1,6 +1,8 @@
 Fastly Frontend terraform module
 ================================
 
+[![Build Status](https://travis-ci.org/mergermarket/tf_fastly_frontend.svg?branch=master)](https://travis-ci.org/mergermarket/tf_fastly_frontend)
+
 This module creates Fastly Frontend including some conditions, like:
 - conditionally forcing SSL
 - conditionally disabling caching
