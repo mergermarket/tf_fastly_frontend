@@ -60,10 +60,6 @@ variable "bare_redirect_domain_name" {
   default = ""
 }
 
-variable "bare_redirect_domain_name" {
-  default = ""
-}
-
 variable "backend_address" {}
 
 variable "env" {}
@@ -94,10 +90,6 @@ variable "between_bytes_timeout" {
 
 variable "proxy_error_response" {
   default = "abc"
-}
-
-variable "ssl_cert_hostname" {
-  default = ""
 }
 
 variable "ssl_cert_hostname" {
