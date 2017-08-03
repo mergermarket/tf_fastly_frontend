@@ -43,6 +43,7 @@ def template_to_re(t):
 class TestTFFastlyFrontend(unittest.TestCase):
 
     def setUp(self):
+        check_call(['terraform', 'init', 'test/infra'])
         check_call(['terraform', 'get', 'test/infra'])
 
     def _env_for_check_output(self, fastly_api_key):
@@ -69,13 +70,13 @@ class TestTFFastlyFrontend(unittest.TestCase):
 
         # Then
         assert """
-    default_host:                                 "ci-www.domain.com"
+      default_host:                                 "ci-www.domain.com"
         """.strip() in output
 
         assert re.search(template_to_re("""
-    domain.#:                                     "1"
-    domain.{ident}.comment:                    ""
-    domain.{ident}.name:                       "ci-www.domain.com"
+      domain.#:                                     "1"
+      domain.{ident}.comment:                    ""
+      domain.{ident}.name:                       "ci-www.domain.com"
         """.strip()), output)
 
         assert """
@@ -141,13 +142,13 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert """
-    default_host:                                 "www.domain.com"
+      default_host:                                 "www.domain.com"
         """.strip() in output
 
         assert re.search(template_to_re("""
-    domain.#:                                     "1"
-    domain.{ident}.comment:                    ""
-    domain.{ident}.name:                       "www.domain.com"
+      domain.#:                                     "1"
+      domain.{ident}.comment:                    ""
+      domain.{ident}.name:                       "www.domain.com"
         """.strip()), output)
 
         assert """
@@ -155,7 +156,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert re.search(template_to_re("""
-    header.{ident}.source:                     "\\"https://www.domain.com\\" + req.url"
+      header.{ident}.source:                     "\\"https://www.domain.com\\" + req.url"
         """.strip()), output) # noqa
 
         assert """
@@ -179,19 +180,19 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-    header.#:                                     "2"
-    header.{ident}.action:                     "delete"
-    header.{ident}.cache_condition:            ""
-    header.{ident}.destination:                "http.X-Powered-By"
-    header.{ident}.ignore_if_set:              "false"
-    header.{ident}.name:                       "Remove X-Powered-By header"
-    header.{ident}.priority:                   "100"
-    header.{ident}.regex:                      "<computed>"
-    header.{ident}.request_condition:          ""
-    header.{ident}.response_condition:         ""
-    header.{ident}.source:                     "<computed>"
-    header.{ident}.substitution:               "<computed>"
-    header.{ident}.type:                       "cache"
+      header.#:                                     "2"
+      header.{ident}.action:                     "delete"
+      header.{ident}.cache_condition:            ""
+      header.{ident}.destination:                "http.X-Powered-By"
+      header.{ident}.ignore_if_set:              "false"
+      header.{ident}.name:                       "Remove X-Powered-By header"
+      header.{ident}.priority:                   "100"
+      header.{ident}.regex:                      "<computed>"
+      header.{ident}.request_condition:          ""
+      header.{ident}.response_condition:         ""
+      header.{ident}.source:                     "<computed>"
+      header.{ident}.substitution:               "<computed>"
+      header.{ident}.type:                       "cache"
         """.strip()), output)
 
     def test_obfuscate_server_header(self):
@@ -211,18 +212,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-    header.{ident}.action:                     "set"
-    header.{ident}.cache_condition:            ""
-    header.{ident}.destination:                "http.Server"
-    header.{ident}.ignore_if_set:              "false"
-    header.{ident}.name:                       "Obfuscate Server header"
-    header.{ident}.priority:                   "100"
-    header.{ident}.regex:                      "<computed>"
-    header.{ident}.request_condition:          ""
-    header.{ident}.response_condition:         ""
-    header.{ident}.source:                     "\\"LHC\\""
-    header.{ident}.substitution:               "<computed>"
-    header.{ident}.type:                       "cache"
+      header.{ident}.action:                     "set"
+      header.{ident}.cache_condition:            ""
+      header.{ident}.destination:                "http.Server"
+      header.{ident}.ignore_if_set:              "false"
+      header.{ident}.name:                       "Obfuscate Server header"
+      header.{ident}.priority:                   "100"
+      header.{ident}.regex:                      "<computed>"
+      header.{ident}.request_condition:          ""
+      header.{ident}.response_condition:         ""
+      header.{ident}.source:                     "\\"LHC\\""
+      header.{ident}.substitution:               "<computed>"
+      header.{ident}.type:                       "cache"
         """.strip()), output)
 
     def test_override_robots_for_non_live_environments(self):
@@ -242,20 +243,21 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    response_object.{ident}.cache_condition:   ""
-    response_object.{ident}.content:           "User-agent: *\\nDisallow: /\\n"
-    response_object.{ident}.content_type:      "text/plain"
-    response_object.{ident}.name:              "override-robots.txt"
-    response_object.{ident}.request_condition: "override-robots.txt-condition"
-    response_object.{ident}.response:          "OK"
-    response_object.{ident}.status:            "200"
+      response_object.{ident}.cache_condition:   ""
+      response_object.{ident}.content:           "User-agent: *\\nDisallow: /\\n"
+      response_object.{ident}.content_type:      "text/plain"
+      response_object.{ident}.name:              "override-robots.txt"
+      response_object.{ident}.request_condition: "override-robots.txt-condition"
+      response_object.{ident}.response:          "OK"
+      response_object.{ident}.status:            "200"
+
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-    condition.{ident}.name:                     "override-robots.txt-condition"
-    condition.{ident}.priority:                 "5"
-    condition.{ident}.statement:                "req.url ~ \\"^/robots.txt\\""
-    condition.{ident}.type:                     "REQUEST"
+      condition.{ident}.name:                     "override-robots.txt-condition"
+      condition.{ident}.priority:                 "5"
+      condition.{ident}.statement:                "req.url ~ \\"^/robots.txt\\""
+      condition.{ident}.type:                     "REQUEST"
         """.strip()), output) # noqa
 
     def test_force_ssl_and_caching_enabled_by_default(self):
@@ -275,19 +277,19 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    request_setting.#:                            "1"
-    request_setting.{ident}.action:            ""
-    request_setting.{ident}.bypass_busy_wait:  ""
-    request_setting.{ident}.default_host:      ""
-    request_setting.{ident}.force_miss:        "false"
-    request_setting.{ident}.force_ssl:         "true"
-    request_setting.{ident}.geo_headers:       ""
-    request_setting.{ident}.hash_keys:         ""
-    request_setting.{ident}.max_stale_age:     "60"
-    request_setting.{ident}.name:              "disable caching"
-    request_setting.{ident}.request_condition: "all_urls"
-    request_setting.{ident}.timer_support:     ""
-    request_setting.{ident}.xff:               "append"
+      request_setting.#:                            "1"
+      request_setting.{ident}.action:            ""
+      request_setting.{ident}.bypass_busy_wait:  ""
+      request_setting.{ident}.default_host:      ""
+      request_setting.{ident}.force_miss:        "false"
+      request_setting.{ident}.force_ssl:         "true"
+      request_setting.{ident}.geo_headers:       ""
+      request_setting.{ident}.hash_keys:         ""
+      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.name:              "disable caching"
+      request_setting.{ident}.request_condition: "all_urls"
+      request_setting.{ident}.timer_support:     ""
+      request_setting.{ident}.xff:               "append"
         """.strip()), output) # noqa
 
     def test_disable_caching(self):
@@ -306,19 +308,19 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    request_setting.#:                            "1"
-    request_setting.{ident}.action:            ""
-    request_setting.{ident}.bypass_busy_wait:  ""
-    request_setting.{ident}.default_host:      ""
-    request_setting.{ident}.force_miss:        "true"
-    request_setting.{ident}.force_ssl:         "true"
-    request_setting.{ident}.geo_headers:       ""
-    request_setting.{ident}.hash_keys:         ""
-    request_setting.{ident}.max_stale_age:     "60"
-    request_setting.{ident}.name:              "disable caching"
-    request_setting.{ident}.request_condition: "all_urls"
-    request_setting.{ident}.timer_support:     ""
-    request_setting.{ident}.xff:               "append"
+      request_setting.#:                            "1"
+      request_setting.{ident}.action:            ""
+      request_setting.{ident}.bypass_busy_wait:  ""
+      request_setting.{ident}.default_host:      ""
+      request_setting.{ident}.force_miss:        "true"
+      request_setting.{ident}.force_ssl:         "true"
+      request_setting.{ident}.geo_headers:       ""
+      request_setting.{ident}.hash_keys:         ""
+      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.name:              "disable caching"
+      request_setting.{ident}.request_condition: "all_urls"
+      request_setting.{ident}.timer_support:     ""
+      request_setting.{ident}.xff:               "append"
         """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
@@ -337,19 +339,19 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    request_setting.#:                            "1"
-    request_setting.{ident}.action:            ""
-    request_setting.{ident}.bypass_busy_wait:  ""
-    request_setting.{ident}.default_host:      ""
-    request_setting.{ident}.force_miss:        "false"
-    request_setting.{ident}.force_ssl:         "false"
-    request_setting.{ident}.geo_headers:       ""
-    request_setting.{ident}.hash_keys:         ""
-    request_setting.{ident}.max_stale_age:     "60"
-    request_setting.{ident}.name:              "disable caching"
-    request_setting.{ident}.request_condition: "all_urls"
-    request_setting.{ident}.timer_support:     ""
-    request_setting.{ident}.xff:               "append"
+      request_setting.#:                            "1"
+      request_setting.{ident}.action:            ""
+      request_setting.{ident}.bypass_busy_wait:  ""
+      request_setting.{ident}.default_host:      ""
+      request_setting.{ident}.force_miss:        "false"
+      request_setting.{ident}.force_ssl:         "false"
+      request_setting.{ident}.geo_headers:       ""
+      request_setting.{ident}.hash_keys:         ""
+      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.name:              "disable caching"
+      request_setting.{ident}.request_condition: "all_urls"
+      request_setting.{ident}.timer_support:     ""
+      request_setting.{ident}.xff:               "append"
         """.strip()), output) # noqa
 
     def test_custom_timeouts(self):
@@ -370,10 +372,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-    backend.{ident}.between_bytes_timeout:     "31337"
-    backend.{ident}.connect_timeout:           "12345"
-    backend.{ident}.error_threshold:           "0"
-    backend.{ident}.first_byte_timeout:        "54321"
+      backend.{ident}.between_bytes_timeout:     "31337"
+      backend.{ident}.connect_timeout:           "12345"
+      backend.{ident}.error_threshold:           "0"
+      backend.{ident}.first_byte_timeout:        "54321"
         """.strip()), output)
 
     def test_502_error_condition_page(self):
@@ -392,7 +394,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    response_object.{ident}.content:           "<html>error</html>"
+      response_object.{ident}.content:           "<html>error</html>"
         """.strip()), output)
 
     def test_503_error_condition_page(self):
@@ -411,7 +413,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-    response_object.{ident}.content:           "<html>error</html>"
+      response_object.{ident}.content:           "<html>error</html>"
         """.strip()), output)
 
     def test_502_error_condition(self):
@@ -429,16 +431,16 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-    condition.{ident1}.type:                    "CACHE"
-    condition.{ident2}.name:                    "response-502-condition"
-    condition.{ident2}.priority:                "5"
-    condition.{ident2}.statement:               "beresp.status == 502"
+      condition.{ident1}.type:                    "CACHE"
+      condition.{ident2}.name:                    "response-502-condition"
+      condition.{ident2}.priority:                "5"
+      condition.{ident2}.statement:               "beresp.status == 502"
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-    vcl.{ident}.content:                       "81d77771d4a92fc470d5e23857dff9ddc0df4b5f"
-    vcl.{ident}.main:                          "true"
-    vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content:                       "81d77771d4a92fc470d5e23857dff9ddc0df4b5f"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
 
     def test_503_error_condition(self):
@@ -456,9 +458,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-    condition.{ident2}.name:                    "response-503-condition"
-    condition.{ident2}.priority:                "5"
-    condition.{ident2}.statement:               "beresp.status == 503"
+      condition.{ident2}.name:                    "response-503-condition"
+      condition.{ident2}.priority:                "5"
+      condition.{ident2}.statement:               "beresp.status == 503"
         """.strip()), output) # noqa
 
     def test_ssl_cert_hostname(self):
@@ -476,5 +478,5 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-   backend.{ident}.ssl_cert_hostname:         "test-hostname"
+     backend.{ident}.ssl_cert_hostname:         "test-hostname"
         """.strip()), output) # noqa
