@@ -20,6 +20,11 @@ variable "env" {
   description = "Environment name"
 }
 
+variable "le_logset_id" {
+  description = "Logentries Logset ID"
+  type        = "string"
+}
+
 variable "caching" {
   type        = "string"
   description = "Whether to or not disable caching on Fastly (default: true)"
@@ -81,4 +86,3 @@ variable "proxy_error_response" {
 </html>
 EOF
 }
-

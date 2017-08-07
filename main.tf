@@ -115,6 +115,11 @@ resource "fastly_service_v1" "fastly" {
   }
 
   force_destroy = true
+
+  logentries {
+    name  = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
+    token = "${logentries_log.logs.token}"
+  }
 }
 
 data "template_file" "custom_vcl" {
@@ -165,5 +170,10 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     type      = "REQUEST"
     priority  = 5
     statement = "req.url ~ \".*\""
+  }
+
+  logentries {
+    name  = "${var.domain_name}-redirection"
+    token = "${logentries_log.logs.token}"
   }
 }
