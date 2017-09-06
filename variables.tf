@@ -20,9 +20,10 @@ variable "env" {
   description = "Environment name"
 }
 
-variable "le_logset_id" {
-  description = "Logentries Logset ID"
+variable "le_logset_parent_name" {
+  description = "Logentries Logset Name under which Logs will be created"
   type        = "string"
+  default     = "Fastly"
 }
 
 variable "caching" {

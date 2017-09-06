@@ -113,7 +113,9 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         assert re.search(template_to_re("""
   + module.fastly.logentries_log.logs
-      logset_id:        "123"
+        """.strip()), output) # noqa
+
+        assert re.search(template_to_re("""
       name:             "ci-www.domain.com"
       retention_period: "ACCOUNT_DEFAULT"
       source:           "token"
