@@ -8,7 +8,6 @@ module "fastly" {
   env                       = "${var.env}"
   bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
   proxy_error_response      = "${var.proxy_error_response}"
-  le_logset_id              = "${var.le_logset_id}"
 }
 
 module "fastly_custom_timeouts" {
@@ -20,7 +19,6 @@ module "fastly_custom_timeouts" {
   connect_timeout       = "${var.connect_timeout}"
   first_byte_timeout    = "${var.first_byte_timeout}"
   between_bytes_timeout = "${var.between_bytes_timeout}"
-  le_logset_id          = "${var.le_logset_id}"
 }
 
 module "fastly_disable_caching" {
@@ -30,7 +28,6 @@ module "fastly_disable_caching" {
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
   caching         = "${var.caching}"
-  le_logset_id    = "${var.le_logset_id}"
 }
 
 module "fastly_disable_force_ssl" {
@@ -40,7 +37,6 @@ module "fastly_disable_force_ssl" {
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
   force_ssl       = "${var.force_ssl}"
-  le_logset_id    = "${var.le_logset_id}"
 }
 
 module "fastly_ssl_cert_hostname" {
@@ -50,7 +46,6 @@ module "fastly_ssl_cert_hostname" {
   backend_address   = "${var.backend_address}"
   env               = "${var.env}"
   ssl_cert_hostname = "${var.ssl_cert_hostname}"
-  le_logset_id      = "${var.le_logset_id}"
 }
 
 # variables
@@ -66,10 +61,6 @@ variable "env" {}
 
 variable "caching" {
   default = "true"
-}
-
-variable "le_logset_id" {
-  default = "123"
 }
 
 variable "force_ssl" {
