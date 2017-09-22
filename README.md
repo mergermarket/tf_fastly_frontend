@@ -17,9 +17,9 @@ Module Input Variables
 ----------------------
 
 - `domain_name` - (string) - **REQUIRED** - The full domain name for your website in live, including any prefix (e.g. `www.my-site.com`).
-- `bare_redirect_domain_name` - (string) - If set, then a service will be created in live to redirect this bare domain to the prefixed version - for example you might set this value to `my-site.com` in order to redirect users to `www.my-site.com`.
 - `backend_address` - (string) - **REQUIRED** - Backend address to service requests for your domains
 - `env` - (string) - **REQUIRED** - Environment name - for non-live environments, will be prefixed with a hyphen onto the start of the domain name. used to build name of resources and conditionally enable/disable certain features of the module
+- `bare_redirect_domain_name` - (string) - If set, a service will be created in live to redirect this bare domain to the prefixed version - for example you might set this value to `my-site.com` in order to redirect users to `www.my-site.com` (default `""`, i.e. will not be used)
 - `le_logset_parent_name` - (string) - Parent Logentries Logset name under which Logs will be created (default: `Fastly`)
 - `caching` - (bool) - Whether to enable / forcefully disable caching (default: `true`)
 - `force_ssl` - (bool) - Controls whether to redirect HTTP -> HTTPS (default: `true`)
@@ -37,8 +37,9 @@ Usage
 module "fastly" {
   source = "github.com/mergermarket/tf_fastly_frontend"
 
-  domain_name         = "domain.com"
-  backend_address     = "aws-alb-address.com"
-  env                 = "ci"
+  domain_name               = "www.domain.com"
+  backend_address           = "aws-alb-address.com"
+  env                       = "ci"
+  bare_redirect_domain_name = "domain.com"
 }
 ```
