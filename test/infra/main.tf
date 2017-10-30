@@ -8,6 +8,7 @@ module "fastly" {
   env                       = "${var.env}"
   bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
   proxy_error_response      = "${var.proxy_error_response}"
+  custom_vcl_backends       = "${var.custom_vcl_backends}"
 }
 
 module "fastly_custom_timeouts" {
@@ -84,5 +85,13 @@ variable "proxy_error_response" {
 }
 
 variable "ssl_cert_hostname" {
+  default = ""
+}
+
+variable "custom_vcl_backends" {
+  default = ""
+}
+
+variable "custom_vcl_recv" {
   default = ""
 }
