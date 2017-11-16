@@ -1,10 +1,13 @@
 /**
  * This is based on the fastly-boilerplate.vcl - to see the differences run:
  *
- *    diff -u fastly-boilerplate.vcl custom.vcl 
+ *    diff -u fastly-boilerplate.vcl custom.vcl
  */
+${custom_vcl_backends}
 sub vcl_recv {
 #FASTLY recv
+
+${custom_vcl_recv}
 
   if (req.request != "HEAD" && req.request != "GET" && req.request != "FASTLYPURGE") {
     return(pass);
