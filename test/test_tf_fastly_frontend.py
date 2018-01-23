@@ -440,7 +440,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "6c6520150bf5839c335d24c9d1f745ecd4368858"
+      vcl.{ident}.content:                       "966b8a0186190d1d2193669e7b9d91855a3c9894"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -499,7 +499,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "9c422a8962b924a7b02be727c1c6253ad45b5d9b"
+      vcl.{ident}.content:                       "0f6a13d45163c372760485219b3dd609547ab97e"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -520,7 +520,28 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "61cba4a312d335b8242595abc2eac6d316a62554"
-      vcl.{ident}.main:                           "true"
-      vcl.{ident}.name:                           "custom_vcl"
+      vcl.{ident}.content:                       "2f8f5541b733b11b4c9badd3cdcbc2fbaa47eb6d"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
+        """.strip()), output) # noqa
+
+    def test_custom_vcl_error_added(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'custom_vcl_error=baz',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      vcl.{ident}.content:                       "c851607eec588af067851810ffa5be84f1083e91"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa

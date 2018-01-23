@@ -129,6 +129,7 @@ data "template_file" "custom_vcl" {
     proxy_error_response = "${var.proxy_error_response}"
     custom_vcl_backends  = "${var.custom_vcl_backends}"
     custom_vcl_recv      = "${var.custom_vcl_recv}"
+    custom_vcl_error     = "${var.custom_vcl_error}"
   }
 }
 
