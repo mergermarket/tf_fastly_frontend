@@ -440,7 +440,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "966b8a0186190d1d2193669e7b9d91855a3c9894"
+      vcl.{ident}.content:                       "510a19bcfe9b88170b200d1e7dfca558ad4b6332"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -499,9 +499,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "0f6a13d45163c372760485219b3dd609547ab97e"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content:                        "3a91f7970f556101a251fec0738f03eb2eb7a494"
+      vcl.{ident}.main:                           "true"
+      vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_recv_added(self):
@@ -520,7 +520,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "2f8f5541b733b11b4c9badd3cdcbc2fbaa47eb6d"
+      vcl.{ident}.content:                       "ad83e101eb40d9796fc7bba46a5763f854160781"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -541,7 +541,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "c851607eec588af067851810ffa5be84f1083e91"
+      vcl.{ident}.content:                       "c40c24daaae614402ce5fd0613914a98c58650f1"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
