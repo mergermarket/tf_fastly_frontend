@@ -99,3 +99,9 @@ variable "custom_vcl_recv" {
   description = "Custom VCL to add to the vcl_recv sub after the Fastly hook"
   default     = ""
 }
+
+variable "custom_vcl_error" {
+  type        = "string"
+  description = "Custom VCL to add to the vcl_error sub after the Fastly hook"
+  default     = ""
+}

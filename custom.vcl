@@ -81,6 +81,8 @@ sub vcl_error {
    synthetic {"${proxy_error_response}"};
    return(deliver);
  }
+ 
+  ${custom_vcl_error}
 }
 
 sub vcl_pass {

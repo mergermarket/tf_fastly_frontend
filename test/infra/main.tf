@@ -9,6 +9,8 @@ module "fastly" {
   bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
   proxy_error_response      = "${var.proxy_error_response}"
   custom_vcl_backends       = "${var.custom_vcl_backends}"
+  custom_vcl_recv           = "${var.custom_vcl_recv}"
+  custom_vcl_error          = "${var.custom_vcl_error}"
 }
 
 module "fastly_custom_timeouts" {
@@ -93,5 +95,9 @@ variable "custom_vcl_backends" {
 }
 
 variable "custom_vcl_recv" {
+  default = ""
+}
+
+variable "custom_vcl_error" {
   default = ""
 }

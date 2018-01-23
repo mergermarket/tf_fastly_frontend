@@ -440,7 +440,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "44d442dae21927ea3ce64955cb52472474131d31"
+      vcl.{ident}.content:                       "510a19bcfe9b88170b200d1e7dfca558ad4b6332"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -499,7 +499,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "58cd6ad3f54e71d85cdcb5181a79b50d8388a68f"
+      vcl.{ident}.content:                        "3a91f7970f556101a251fec0738f03eb2eb7a494"
       vcl.{ident}.main:                           "true"
       vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
@@ -520,7 +520,28 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "257141b00a6922282c4004781dc0672ddb8e2594"
+      vcl.{ident}.content:                       "ad83e101eb40d9796fc7bba46a5763f854160781"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
+        """.strip()), output) # noqa
+
+    def test_custom_vcl_error_added(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'custom_vcl_error=baz',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      vcl.{ident}.content:                       "c40c24daaae614402ce5fd0613914a98c58650f1"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
