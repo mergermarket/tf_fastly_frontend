@@ -440,7 +440,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "6c6520150bf5839c335d24c9d1f745ecd4368858"
+      vcl.{ident}.content:                       "44d442dae21927ea3ce64955cb52472474131d31"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -499,9 +499,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "9c422a8962b924a7b02be727c1c6253ad45b5d9b"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content:                        "58cd6ad3f54e71d85cdcb5181a79b50d8388a68f"
+      vcl.{ident}.main:                           "true"
+      vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_recv_added(self):
@@ -520,7 +520,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "61cba4a312d335b8242595abc2eac6d316a62554"
-      vcl.{ident}.main:                           "true"
-      vcl.{ident}.name:                           "custom_vcl"
+      vcl.{ident}.content:                       "257141b00a6922282c4004781dc0672ddb8e2594"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
