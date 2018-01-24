@@ -31,7 +31,7 @@ resource "fastly_service_v1" "fastly" {
     name              = "disable caching"
     request_condition = "all_urls"
     force_miss        = "${var.caching == "false" ? true : false}"
-    force_ssl         = "${var.force_ssl}"
+    force_ssl         = "${!! var.force_ssl}"
   }
 
   condition {
