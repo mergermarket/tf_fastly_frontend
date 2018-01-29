@@ -77,7 +77,7 @@ sub vcl_error {
 #FASTLY error
 
  /* handle proxy errors */
- if (obj.status == 502 && obj.status == 503) {
+ if (obj.status == 502 || obj.status == 503) {
    synthetic {"${proxy_error_response}"};
    return(deliver);
  }
