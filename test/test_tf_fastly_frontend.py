@@ -440,7 +440,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "510a19bcfe9b88170b200d1e7dfca558ad4b6332"
+      vcl.{ident}.content:                       "964b63eac399fd8aaa928e8e74dc461b7cb0fdc5"
       vcl.{ident}.main:                          "true"
       vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
@@ -499,9 +499,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "3a91f7970f556101a251fec0738f03eb2eb7a494"
-      vcl.{ident}.main:                           "true"
-      vcl.{ident}.name:                           "custom_vcl"
+      vcl.{ident}.content:                       "cfc34febb4106525e7a97fc683a07e49ac5fc889"
+      vcl.{ident}.main:                          "true"
+      vcl.{ident}.name:                          "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_recv_added(self):
@@ -520,9 +520,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "ad83e101eb40d9796fc7bba46a5763f854160781"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content:                        "651d4c4ceabbd8653d619a6810a2b4c16d5c4591"
+      vcl.{ident}.main:                           "true"
+      vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_error_added(self):
@@ -541,7 +541,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "c40c24daaae614402ce5fd0613914a98c58650f1"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content:                        "7ca7b5134ba45d3f0fb1ac2e93fe817c210ece9e"
+      vcl.{ident}.main:                           "true"
+      vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
