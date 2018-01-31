@@ -135,7 +135,7 @@ data "template_file" "custom_vcl" {
 
 # resource performing bare-domain redirection to prefix; only for live
 resource "fastly_service_v1" "fastly_bare_domain_redirection" {
-  name  = "${var.domain_name}-redirection"
+  name  = "${var.bare_redirect_domain_name}-redirection"
   count = "${var.bare_redirect_domain_name != "" ? 1 : 0}"
 
   domain {
