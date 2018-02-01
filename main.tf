@@ -1,11 +1,15 @@
+locals {
+  full_domain_name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
+}
+
 resource "fastly_service_v1" "fastly" {
   name = "${var.env}-${var.domain_name}"
 
   domain {
-    name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
+    name = "${local.full_domain_name}"
   }
 
-  default_host = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
+  default_host = "${local.full_domain_name}"
   default_ttl  = 60
 
   backend {
@@ -117,7 +121,7 @@ resource "fastly_service_v1" "fastly" {
   force_destroy = true
 
   logentries {
-    name  = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
+    name  = "${local.full_domain_name}"
     token = "${logentries_log.logs.token}"
   }
 }
@@ -164,7 +168,7 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     destination       = "http.Location"
     type              = "response"
     action            = "set"
-    source            = "\"https://${var.domain_name}\" + req.url"
+    source            = "\"https://${local.full_domain_name}\" + req.url"
     request_condition = "all_urls"
   }
 
