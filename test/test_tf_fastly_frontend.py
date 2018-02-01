@@ -102,6 +102,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         assert re.search(template_to_re("""
       logentries.#:                                 "1"
       logentries.~{ident}.format:                "%h %l %u %t %r %>s"
+      logentries.~{ident}.format_version:        "1"
       logentries.~{ident}.name:                  "ci-www.domain.com"
       logentries.~{ident}.port:                  "20000"
       logentries.~{ident}.response_condition:    ""
@@ -116,13 +117,13 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      name:             "ci-www.domain.com"
-      retention_period: "ACCOUNT_DEFAULT"
-      source:           "token"
-      token:            "<computed>"
+      name:                                         "ci-www.domain.com"
+      retention_period:                             "ACCOUNT_DEFAULT"
+      source:                                       "token"
+      token:                                        <computed>
         """.strip()), output) # noqa
 
-    def test_create_fastly_service_in_live_creates_redirection(self):
+    def test_create_fastly_service_creates_redirection(self):
         # Given
 
         # When
@@ -132,7 +133,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'bare_redirect_domain_name=domain.com',
             '-var', 'backend_address=1.1.1.1',
-            '-var', 'env=live',
+            '-var', 'env=any',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -143,14 +144,10 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 + module.fastly.fastly_service_v1.fastly
         """.strip() in output
 
-        assert """
-      default_host:                                 "www.domain.com"
-        """.strip() in output
-
         assert re.search(template_to_re("""
       domain.#:                                     "1"
-      domain.{ident}.comment:                    ""
-      domain.{ident}.name:                       "www.domain.com"
+      domain.{ident}.comment:                     ""
+      domain.{ident}.name:                        "any-www.domain.com"
         """.strip()), output)
 
         assert """
@@ -158,7 +155,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert re.search(template_to_re("""
-      header.{ident}.source:                     "\\"https://www.domain.com\\" + req.url"
+      header.{ident}.source:                     "\\"https://any-www.domain.com\\" + req.url"
         """.strip()), output) # noqa
 
         assert """
@@ -189,11 +186,11 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       header.{ident}.ignore_if_set:              "false"
       header.{ident}.name:                       "Remove X-Powered-By header"
       header.{ident}.priority:                   "100"
-      header.{ident}.regex:                      "<computed>"
+      header.{ident}.regex:                      <computed>
       header.{ident}.request_condition:          ""
       header.{ident}.response_condition:         ""
-      header.{ident}.source:                     "<computed>"
-      header.{ident}.substitution:               "<computed>"
+      header.{ident}.source:                     <computed>
+      header.{ident}.substitution:               <computed>
       header.{ident}.type:                       "cache"
         """.strip()), output)
 
@@ -220,11 +217,11 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       header.{ident}.ignore_if_set:              "false"
       header.{ident}.name:                       "Obfuscate Server header"
       header.{ident}.priority:                   "100"
-      header.{ident}.regex:                      "<computed>"
+      header.{ident}.regex:                      <computed>
       header.{ident}.request_condition:          ""
       header.{ident}.response_condition:         ""
       header.{ident}.source:                     "\\"LHC\\""
-      header.{ident}.substitution:               "<computed>"
+      header.{ident}.substitution:               <computed>
       header.{ident}.type:                       "cache"
         """.strip()), output)
 
@@ -287,7 +284,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.force_ssl:         "true"
       request_setting.{ident}.geo_headers:       ""
       request_setting.{ident}.hash_keys:         ""
-      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.max_stale_age:     ""
       request_setting.{ident}.name:              "disable caching"
       request_setting.{ident}.request_condition: "all_urls"
       request_setting.{ident}.timer_support:     ""
@@ -318,7 +315,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.force_ssl:         "true"
       request_setting.{ident}.geo_headers:       ""
       request_setting.{ident}.hash_keys:         ""
-      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.max_stale_age:     ""
       request_setting.{ident}.name:              "disable caching"
       request_setting.{ident}.request_condition: "all_urls"
       request_setting.{ident}.timer_support:     ""
@@ -349,7 +346,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.force_ssl:         "false"
       request_setting.{ident}.geo_headers:       ""
       request_setting.{ident}.hash_keys:         ""
-      request_setting.{ident}.max_stale_age:     "60"
+      request_setting.{ident}.max_stale_age:     ""
       request_setting.{ident}.name:              "disable caching"
       request_setting.{ident}.request_condition: "all_urls"
       request_setting.{ident}.timer_support:     ""
@@ -480,7 +477,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-     backend.{ident}.ssl_cert_hostname:         "test-hostname"
+     backend.{ident}.ssl_cert_hostname:          "test-hostname"
         """.strip()), output) # noqa
 
     def test_custom_vcl_backends_added(self):
