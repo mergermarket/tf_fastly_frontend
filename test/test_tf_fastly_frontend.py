@@ -477,8 +477,27 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-     backend.{ident}.ssl_cert_hostname:          "test-hostname"
+     backend.{ident}.ssl_cert_hostname:         "test-hostname"
         """.strip()), output) # noqa
+
+    def test_use_ssl(self):
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'ssl_cert_hostname=test-hostname',
+            '-target=module.fastly_ssl_cert_hostname',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+     backend.{ident}.use_ssl:                   "true"
+        """.strip()), output) # noqa
+
 
     def test_custom_vcl_backends_added(self):
         # Given When
