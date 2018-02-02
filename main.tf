@@ -16,6 +16,7 @@ resource "fastly_service_v1" "fastly" {
     address               = "${var.backend_address}"
     name                  = "default backend"
     port                  = 443
+    use_ssl               = "true"
     ssl_check_cert        = "${var.ssl_cert_check}"
     ssl_cert_hostname     = "${var.ssl_cert_hostname}"
     connect_timeout       = "${var.connect_timeout}"
