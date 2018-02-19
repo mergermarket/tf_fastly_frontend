@@ -37,6 +37,7 @@ resource "fastly_service_v1" "fastly" {
     request_condition = "all_urls"
     force_miss        = "${var.caching == "false" ? true : false}"
     force_ssl         = "${var.force_ssl}"
+    bypass_busy_wait  = "${var.bypass_busy_wait}"
   }
 
   condition {

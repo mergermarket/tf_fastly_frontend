@@ -105,3 +105,9 @@ variable "custom_vcl_error" {
   description = "Custom VCL to add to the vcl_error sub after the Fastly hook"
   default     = ""
 }
+
+variable "bypass_busy_wait" {
+  type = "string"
+  description = "Disable collapsed forwarding, so you don't wait for other objects to origin."
+  default = "false"
+}
