@@ -78,7 +78,7 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-503-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "beresp.status == 503"
+    statement = "beresp.status == 503 && req.http.Cookie:viewerror != \"true\""
   }
 
   # 502 error handling
@@ -95,7 +95,7 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-502-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "beresp.status == 502"
+    statement = "beresp.status == 502 && req.http.Cookie:viewerror != \"true\""
   }
 
   # Sanitise HTTP headers
