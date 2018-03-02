@@ -430,10 +430,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      condition.{ident1}.type:                    "CACHE"
-      condition.{ident2}.name:                    "response-502-condition"
-      condition.{ident2}.priority:                "5"
-      condition.{ident2}.statement:               "beresp.status == 502"
+      condition.{ident}.name:                    "response-502-condition"
+      condition.{ident}.priority:                "5"
+      condition.{ident}.statement:               "beresp.status == 502 && req.http.Cookie:viewerror != \\"true\\""
+      condition.{ident}.type:                    "CACHE"
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
@@ -457,9 +457,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      condition.{ident2}.name:                    "response-503-condition"
-      condition.{ident2}.priority:                "5"
-      condition.{ident2}.statement:               "beresp.status == 503"
+      condition.{ident}.name:                     "response-503-condition"
+      condition.{ident}.priority:                 "5"
+      condition.{ident}.statement:                "beresp.status == 503 && req.http.Cookie:viewerror != \\"true\\""
+      condition.{ident}.type:                     "CACHE"
         """.strip()), output) # noqa
 
     def test_ssl_cert_hostname(self):
