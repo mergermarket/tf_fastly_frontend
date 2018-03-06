@@ -33,18 +33,14 @@ resource "fastly_service_v1" "fastly" {
   # Set force-miss (disables caching) and force-ssl (enables redirect from HTTP
   # -> HTTPS for all requests) settings
   request_setting {
-    name              = "disable caching"
-    request_condition = "all_urls"
-    force_miss        = "${var.caching == "false" ? true : false}"
+    name              = "request-setting"
     force_ssl         = "${var.force_ssl}"
     bypass_busy_wait  = "${var.bypass_busy_wait}"
   }
 
-  condition {
-    name      = "all_urls"
-    priority  = "10"
-    statement = "req.url ~ \".*\""
-    type      = "REQUEST"
+  cache_setting {
+    name   = "cache-setting"
+    action = "${var.caching == "false" ? "pass" : "cache"}"
   }
 
   # Override requests for /robots.txt for non-live environments
@@ -162,7 +158,6 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     name              = "redirect_bare_domain_to_prefix"
     status            = 301
     response          = "Moved Permanently"
-    request_condition = "all_urls"
   }
 
   header {
@@ -171,14 +166,6 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     type              = "response"
     action            = "set"
     source            = "\"https://${local.full_domain_name}\" + req.url"
-    request_condition = "all_urls"
-  }
-
-  condition {
-    name      = "all_urls"
-    type      = "REQUEST"
-    priority  = 5
-    statement = "req.url ~ \".*\""
   }
 
   logentries {

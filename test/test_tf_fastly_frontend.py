@@ -259,7 +259,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       condition.{ident}.type:                     "REQUEST"
         """.strip()), output) # noqa
 
-    def test_force_ssl_and_caching_enabled_by_default(self):
+    def test_force_ssl_enabled_by_default(self):
         # given
 
         # when
@@ -280,15 +280,39 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.action:            ""
       request_setting.{ident}.bypass_busy_wait:  "false"
       request_setting.{ident}.default_host:      ""
-      request_setting.{ident}.force_miss:        "false"
+      request_setting.{ident}.force_miss:        ""
       request_setting.{ident}.force_ssl:         "true"
       request_setting.{ident}.geo_headers:       ""
       request_setting.{ident}.hash_keys:         ""
       request_setting.{ident}.max_stale_age:     ""
-      request_setting.{ident}.name:              "disable caching"
-      request_setting.{ident}.request_condition: "all_urls"
+      request_setting.{ident}.name:              "request-setting"
+      request_setting.{ident}.request_condition: ""
       request_setting.{ident}.timer_support:     ""
       request_setting.{ident}.xff:               "append"
+        """.strip()), output) # noqa
+
+    def test_caching_enabled_by_default(self):
+        # given
+
+        # when
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-no-color',
+            '-target=module.fastly',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        assert re.search(template_to_re("""
+      cache_setting.#:                              "1"
+      cache_setting.{ident}.action:              "cache"
+      cache_setting.{ident}.cache_condition:     ""
+      cache_setting.{ident}.name:                "cache-setting"
+      cache_setting.{ident}.stale_ttl:           ""
+      cache_setting.{ident}.ttl:                 ""
         """.strip()), output) # noqa
 
     def test_disable_caching(self):
@@ -307,19 +331,12 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      request_setting.#:                            "1"
-      request_setting.{ident}.action:            ""
-      request_setting.{ident}.bypass_busy_wait:  "false"
-      request_setting.{ident}.default_host:      ""
-      request_setting.{ident}.force_miss:        "true"
-      request_setting.{ident}.force_ssl:         "true"
-      request_setting.{ident}.geo_headers:       ""
-      request_setting.{ident}.hash_keys:         ""
-      request_setting.{ident}.max_stale_age:     ""
-      request_setting.{ident}.name:              "disable caching"
-      request_setting.{ident}.request_condition: "all_urls"
-      request_setting.{ident}.timer_support:     ""
-      request_setting.{ident}.xff:               "append"
+      cache_setting.#:                              "1"
+      cache_setting.{ident}.action:              "pass"
+      cache_setting.{ident}.cache_condition:     ""
+      cache_setting.{ident}.name:                "cache-setting"
+      cache_setting.{ident}.stale_ttl:           ""
+      cache_setting.{ident}.ttl:                 ""
         """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
@@ -342,13 +359,13 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.action:            ""
       request_setting.{ident}.bypass_busy_wait:  "false"
       request_setting.{ident}.default_host:      ""
-      request_setting.{ident}.force_miss:        "false"
+      request_setting.{ident}.force_miss:        ""
       request_setting.{ident}.force_ssl:         "false"
       request_setting.{ident}.geo_headers:       ""
       request_setting.{ident}.hash_keys:         ""
       request_setting.{ident}.max_stale_age:     ""
-      request_setting.{ident}.name:              "disable caching"
-      request_setting.{ident}.request_condition: "all_urls"
+      request_setting.{ident}.name:              "request-setting"
+      request_setting.{ident}.request_condition: ""
       request_setting.{ident}.timer_support:     ""
       request_setting.{ident}.xff:               "append"
         """.strip()), output) # noqa
