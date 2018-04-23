@@ -69,10 +69,6 @@ class TestTFFastlyFrontend(unittest.TestCase):
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         # Then
-        assert """
-      default_host:                                 "ci-www.domain.com"
-        """.strip() in output
-
         assert re.search(template_to_re("""
       domain.#:                                     "1"
       domain.{ident}.comment:                    ""
