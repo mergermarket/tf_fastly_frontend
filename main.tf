@@ -9,7 +9,7 @@ resource "fastly_service_v1" "fastly" {
     name = "${local.full_domain_name}"
   }
 
-  default_ttl  = 60
+  default_ttl = 60
 
   backend {
     address               = "${var.backend_address}"
@@ -21,6 +21,7 @@ resource "fastly_service_v1" "fastly" {
     connect_timeout       = "${var.connect_timeout}"
     first_byte_timeout    = "${var.first_byte_timeout}"
     between_bytes_timeout = "${var.between_bytes_timeout}"
+    shield                = "${var.shield}"
   }
 
   gzip {
@@ -32,9 +33,9 @@ resource "fastly_service_v1" "fastly" {
   # Set force-miss (disables caching) and force-ssl (enables redirect from HTTP
   # -> HTTPS for all requests) settings
   request_setting {
-    name              = "request-setting"
-    force_ssl         = "${var.force_ssl}"
-    bypass_busy_wait  = "${var.bypass_busy_wait}"
+    name             = "request-setting"
+    force_ssl        = "${var.force_ssl}"
+    bypass_busy_wait = "${var.bypass_busy_wait}"
   }
 
   cache_setting {
@@ -154,17 +155,17 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
   }
 
   response_object {
-    name              = "redirect_bare_domain_to_prefix"
-    status            = 301
-    response          = "Moved Permanently"
+    name     = "redirect_bare_domain_to_prefix"
+    status   = 301
+    response = "Moved Permanently"
   }
 
   header {
-    name              = "redirect_bare_domain_to_prefix"
-    destination       = "http.Location"
-    type              = "response"
-    action            = "set"
-    source            = "\"https://${local.full_domain_name}\" + req.url"
+    name        = "redirect_bare_domain_to_prefix"
+    destination = "http.Location"
+    type        = "response"
+    action      = "set"
+    source      = "\"https://${local.full_domain_name}\" + req.url"
   }
 
   logentries {

@@ -107,7 +107,13 @@ variable "custom_vcl_error" {
 }
 
 variable "bypass_busy_wait" {
-  type = "string"
+  type        = "string"
   description = "Disable collapsed forwarding, so you don't wait for other objects to origin."
-  default = "false"
+  default     = "false"
+}
+
+variable "shield" {
+  type        = "string"
+  description = "PoP to use as an origin shield (e.g. london-uk for Slough)."
+  default     = ""
 }
