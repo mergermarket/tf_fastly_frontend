@@ -158,6 +158,38 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
+    def test_x_client_ip_header(self):
+
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      header.{ident}.action:                      "set"
+      header.{ident}.cache_condition:             ""
+      header.{ident}.destination:                 "http.X-Client-IP"
+      header.{ident}.ignore_if_set:               "false"
+      header.{ident}.name:                        "Add X-Client-IP header"
+      header.{ident}.priority:                    "100"
+      header.{ident}.regex:                       <computed>
+      header.{ident}.request_condition:           ""
+      header.{ident}.response_condition:          ""
+      header.{ident}.source:                      "req.http.Fastly-Client-IP"
+      header.{ident}.substitution:                <computed>
+      header.{ident}.type:                        "request"
+        """.strip()), output)
+
     def test_delete_x_powered_by_header(self):
         # Given
 
@@ -175,7 +207,6 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      header.#:                                     "2"
       header.{ident}.action:                     "delete"
       header.{ident}.cache_condition:            ""
       header.{ident}.destination:                "http.X-Powered-By"
