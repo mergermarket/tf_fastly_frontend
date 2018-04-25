@@ -51,6 +51,15 @@ module "fastly_ssl_cert_hostname" {
   ssl_cert_hostname = "${var.ssl_cert_hostname}"
 }
 
+module "fastly_set_shield" {
+  source = "../.."
+
+  domain_name     = "${var.domain_name}"
+  backend_address = "${var.backend_address}"
+  env             = "${var.env}"
+  shield          = "${var.shield}"
+}
+
 # variables
 variable "domain_name" {}
 
@@ -99,5 +108,9 @@ variable "custom_vcl_recv" {
 }
 
 variable "custom_vcl_error" {
+  default = ""
+}
+
+variable "shield" {
   default = ""
 }

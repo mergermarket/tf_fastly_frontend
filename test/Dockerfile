@@ -10,13 +10,15 @@ RUN echo http://dl-cdn.alpinelinux.org/alpine/latest-stable/main >> /etc/apk/rep
 RUN apk update
 RUN apk -U add gcc musl-dev libffi-dev openssl-dev docker curl git zip unzip wget
 
-RUN cd /tmp && \
-    curl -sSLO https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-        unzip terraform_*_linux_amd64.zip -d /usr/bin && \
-    curl -sSLO https://releases.hashicorp.com/terraform-provider-fastly/$TERRAFORM_PROVIDER_FASTLY_VERSION/terraform-provider-fastly_${TERRAFORM_PROVIDER_FASTLY_VERSION}_linux_amd64.zip && \
-        unzip terraform-provider-fastly_*_linux_amd64.zip -d /usr/bin && \
-    wget -q https://s3-eu-west-1.amazonaws.com/mmg-terraform-providers/terraform-provider-logentries_v${TERRAFORM_PROVIDER_LOGENTRIES_VERSION}_linux_amd64.zip && \
-        unzip terraform-provider-logentries_*_linux_amd64.zip -d /usr/bin && \
+ENV TERRAFORM_PLUGIN_DIR=/root/.terraform.d/plugins/
+
+RUN mkdir -p "${TERRAFORM_PLUGIN_DIR}" && cd /tmp && \
+    curl -sSLO "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
+        unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -d /usr/bin && \
+    curl -sSLO "https://releases.hashicorp.com/terraform-provider-fastly/$TERRAFORM_PROVIDER_FASTLY_VERSION/terraform-provider-fastly_${TERRAFORM_PROVIDER_FASTLY_VERSION}_linux_amd64.zip" && \
+        unzip "terraform-provider-fastly_${TERRAFORM_PROVIDER_FASTLY_VERSION}_linux_amd64.zip" -d "${TERRAFORM_PLUGIN_DIR}" && \
+    wget -q "https://s3-eu-west-1.amazonaws.com/mmg-terraform-providers/terraform-provider-logentries_v${TERRAFORM_PROVIDER_LOGENTRIES_VERSION}_linux_amd64.zip" && \
+        unzip "terraform-provider-logentries_v${TERRAFORM_PROVIDER_LOGENTRIES_VERSION}_linux_amd64.zip" -d "${TERRAFORM_PLUGIN_DIR}" && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/*
 
