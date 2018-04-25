@@ -575,3 +575,40 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.main:                           "true"
       vcl.{ident}.name:                           "custom_vcl"
         """.strip()), output) # noqa
+
+    def test_shield_default(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(r'backend.\d+.shield:\s+""', output)
+
+    def test_shield_set(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'shield=test-shield',
+            '-target=module.fastly_set_shield',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(r'backend.\d+.shield:\s+"test-shield"', output)
