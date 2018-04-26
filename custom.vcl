@@ -32,7 +32,7 @@ sub vcl_fetch {
     return(pass);
   }
 
-  if (beresp.http.Cache-Control ~ "private") {
+  if (beresp.http.Cache-Control ~ "private|no-cache") {
     set req.http.Fastly-Cachetype = "PRIVATE";
     return(pass);
   }
