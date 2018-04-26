@@ -338,12 +338,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      cache_setting.#:                       "1"
-      cache_setting.{ident}.action:          "cache"
-      cache_setting.{ident}.cache_condition: ""
+      cache_setting.{ident}.action:          "pass"
+      cache_setting.{ident}.cache_condition: "prevent-caching"
       cache_setting.{ident}.name:            "cache-setting"
       cache_setting.{ident}.stale_ttl:       ""
       cache_setting.{ident}.ttl:             ""
+        """.strip()), output) # noqa
+
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "prevent-caching"
+      condition.{ident}.priority:  "5"
+      condition.{ident}.statement: "! true"
+      condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 
     def test_disable_caching(self):
@@ -362,12 +368,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      cache_setting.#:                       "1"
       cache_setting.{ident}.action:          "pass"
-      cache_setting.{ident}.cache_condition: ""
+      cache_setting.{ident}.cache_condition: "prevent-caching"
       cache_setting.{ident}.name:            "cache-setting"
       cache_setting.{ident}.stale_ttl:       ""
       cache_setting.{ident}.ttl:             ""
+        """.strip()), output) # noqa
+
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "prevent-caching"
+      condition.{ident}.priority:  "5"
+      condition.{ident}.statement: "! false"
+      condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
@@ -485,7 +497,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "d669e7c169ed1dab7d764b242cfc7e76c64ae3c8"
+      vcl.{ident}.content: "6470a8ef3c236fc8e2132471bbb7fc8d140ccee9"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -564,7 +576,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "0dc7e2b573af2470bd74a05b468e485b53843ddf"
+      vcl.{ident}.content: "3c68546c68b6aa396eca354485f83002a9c4044a"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -585,7 +597,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "10c41fee21a716c084861dacb813186be6196611"
+      vcl.{ident}.content: "fad831c931858196b721ecbf5bd24bfcd920a77b"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -606,7 +618,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "d7455608179f65c005fd970f49d4393ffc18353a"
+      vcl.{ident}.content: "21902ce6cd738ade31c658c8e9a272a5b8dd3b26"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
