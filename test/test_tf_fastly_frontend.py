@@ -21,9 +21,11 @@ to to match it:
 def template_to_re(t):
     seen = dict()
 
-    def pattern(placeholder, open_curly, close_curly, text):
+    def pattern(placeholder, open_curly, close_curly, text, whitespace):
         if text is not None:
             return re.escape(text)
+        elif whitespace is not None:
+            return r'\s+'
         elif open_curly is not None:
             return r'\{'
         elif close_curly is not None:
@@ -36,7 +38,9 @@ def template_to_re(t):
 
     return "".join([
         pattern(*match.groups())
-        for match in re.finditer(r'{([\w_]+)}|(\{\{)|(\}\})|([^{}]+)', t)
+        for match in re.finditer(
+            r'{([\w_]+)}|(\{\{)|(\}\})|([^{}\s]+)|(\s+)', t
+        )
     ])
 
 
@@ -70,9 +74,9 @@ class TestTFFastlyFrontend(unittest.TestCase):
 
         # Then
         assert re.search(template_to_re("""
-      domain.#:                                     "1"
-      domain.{ident}.comment:                    ""
-      domain.{ident}.name:                       "ci-www.domain.com"
+      domain.#:               "1"
+      domain.{ident}.comment: ""
+      domain.{ident}.name:    "ci-www.domain.com"
         """.strip()), output)
 
         assert """
@@ -96,12 +100,12 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      logentries.#:                                 "1"
-      logentries.~{ident}.format:                "%h %l %u %t %r %>s"
-      logentries.~{ident}.format_version:        "1"
-      logentries.~{ident}.name:                  "ci-www.domain.com"
-      logentries.~{ident}.port:                  "20000"
-      logentries.~{ident}.response_condition:    ""
+      logentries.#:                              "1"
+      logentries.~{ident}.format:             "%h %l %u %t %r %>s"
+      logentries.~{ident}.format_version:     "1"
+      logentries.~{ident}.name:               "ci-www.domain.com"
+      logentries.~{ident}.port:               "20000"
+      logentries.~{ident}.response_condition: ""
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
@@ -113,10 +117,10 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      name:                                         "ci-www.domain.com"
-      retention_period:                             "ACCOUNT_DEFAULT"
-      source:                                       "token"
-      token:                                        <computed>
+      name:             "ci-www.domain.com"
+      retention_period: "ACCOUNT_DEFAULT"
+      source:           "token"
+      token:            <computed>
         """.strip()), output) # noqa
 
     def test_create_fastly_service_creates_redirection(self):
@@ -141,9 +145,9 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert re.search(template_to_re("""
-      domain.#:                                     "1"
-      domain.{ident}.comment:                     ""
-      domain.{ident}.name:                        "any-www.domain.com"
+      domain.#:               "1"
+      domain.{ident}.comment: ""
+      domain.{ident}.name:    "any-www.domain.com"
         """.strip()), output)
 
         assert """
@@ -151,7 +155,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
         assert re.search(template_to_re("""
-      header.{ident}.source:                     "\\"https://any-www.domain.com\\" + req.url"
+      header.{ident}.source: "\\"https://any-www.domain.com\\" + req.url"
         """.strip()), output) # noqa
 
         assert """
@@ -176,18 +180,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      header.{ident}.action:                      "set"
-      header.{ident}.cache_condition:             ""
-      header.{ident}.destination:                 "http.X-Client-IP"
-      header.{ident}.ignore_if_set:               "false"
-      header.{ident}.name:                        "Add X-Client-IP header"
-      header.{ident}.priority:                    "100"
-      header.{ident}.regex:                       <computed>
-      header.{ident}.request_condition:           ""
-      header.{ident}.response_condition:          ""
-      header.{ident}.source:                      "req.http.Fastly-Client-IP"
-      header.{ident}.substitution:                <computed>
-      header.{ident}.type:                        "request"
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    ""
+      header.{ident}.destination:        "http.X-Client-IP"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Add X-Client-IP header"
+      header.{ident}.priority:           "100"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "req.http.Fastly-Client-IP"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "request"
         """.strip()), output)
 
     def test_delete_x_powered_by_header(self):
@@ -207,18 +211,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      header.{ident}.action:                     "delete"
-      header.{ident}.cache_condition:            ""
-      header.{ident}.destination:                "http.X-Powered-By"
-      header.{ident}.ignore_if_set:              "false"
-      header.{ident}.name:                       "Remove X-Powered-By header"
-      header.{ident}.priority:                   "100"
-      header.{ident}.regex:                      <computed>
-      header.{ident}.request_condition:          ""
-      header.{ident}.response_condition:         ""
-      header.{ident}.source:                     <computed>
-      header.{ident}.substitution:               <computed>
-      header.{ident}.type:                       "cache"
+      header.{ident}.action:             "delete"
+      header.{ident}.cache_condition:    ""
+      header.{ident}.destination:        "http.X-Powered-By"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Remove X-Powered-By header"
+      header.{ident}.priority:           "100"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             <computed>
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
         """.strip()), output)
 
     def test_obfuscate_server_header(self):
@@ -238,18 +242,18 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      header.{ident}.action:                     "set"
-      header.{ident}.cache_condition:            ""
-      header.{ident}.destination:                "http.Server"
-      header.{ident}.ignore_if_set:              "false"
-      header.{ident}.name:                       "Obfuscate Server header"
-      header.{ident}.priority:                   "100"
-      header.{ident}.regex:                      <computed>
-      header.{ident}.request_condition:          ""
-      header.{ident}.response_condition:         ""
-      header.{ident}.source:                     "\\"LHC\\""
-      header.{ident}.substitution:               <computed>
-      header.{ident}.type:                       "cache"
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    ""
+      header.{ident}.destination:        "http.Server"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Obfuscate Server header"
+      header.{ident}.priority:           "100"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "\\"LHC\\""
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
         """.strip()), output)
 
     def test_override_robots_for_non_live_environments(self):
@@ -280,10 +284,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      condition.{ident}.name:                     "override-robots.txt-condition"
-      condition.{ident}.priority:                 "5"
-      condition.{ident}.statement:                "req.url ~ \\"^/robots.txt\\""
-      condition.{ident}.type:                     "REQUEST"
+      condition.{ident}.name:      "override-robots.txt-condition"
+      condition.{ident}.priority:  "5"
+      condition.{ident}.statement: "req.url ~ \\"^/robots.txt\\""
+      condition.{ident}.type:      "REQUEST"
         """.strip()), output) # noqa
 
     def test_force_ssl_enabled_by_default(self):
@@ -303,7 +307,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      request_setting.#:                            "1"
+      request_setting.#:                         "1"
       request_setting.{ident}.action:            ""
       request_setting.{ident}.bypass_busy_wait:  "false"
       request_setting.{ident}.default_host:      ""
@@ -334,12 +338,12 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      cache_setting.#:                              "1"
-      cache_setting.{ident}.action:              "cache"
-      cache_setting.{ident}.cache_condition:     ""
-      cache_setting.{ident}.name:                "cache-setting"
-      cache_setting.{ident}.stale_ttl:           ""
-      cache_setting.{ident}.ttl:                 ""
+      cache_setting.#:                       "1"
+      cache_setting.{ident}.action:          "cache"
+      cache_setting.{ident}.cache_condition: ""
+      cache_setting.{ident}.name:            "cache-setting"
+      cache_setting.{ident}.stale_ttl:       ""
+      cache_setting.{ident}.ttl:             ""
         """.strip()), output) # noqa
 
     def test_disable_caching(self):
@@ -358,12 +362,12 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      cache_setting.#:                              "1"
-      cache_setting.{ident}.action:              "pass"
-      cache_setting.{ident}.cache_condition:     ""
-      cache_setting.{ident}.name:                "cache-setting"
-      cache_setting.{ident}.stale_ttl:           ""
-      cache_setting.{ident}.ttl:                 ""
+      cache_setting.#:                       "1"
+      cache_setting.{ident}.action:          "pass"
+      cache_setting.{ident}.cache_condition: ""
+      cache_setting.{ident}.name:            "cache-setting"
+      cache_setting.{ident}.stale_ttl:       ""
+      cache_setting.{ident}.ttl:             ""
         """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
@@ -415,10 +419,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      backend.{ident}.between_bytes_timeout:     "31337"
-      backend.{ident}.connect_timeout:           "12345"
-      backend.{ident}.error_threshold:           "0"
-      backend.{ident}.first_byte_timeout:        "54321"
+      backend.{ident}.between_bytes_timeout: "31337"
+      backend.{ident}.connect_timeout:       "12345"
+      backend.{ident}.error_threshold:       "0"
+      backend.{ident}.first_byte_timeout:    "54321"
         """.strip()), output)
 
     def test_502_error_condition_page(self):
@@ -437,7 +441,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      response_object.{ident}.content:           "<html>error</html>"
+      response_object.{ident}.content: "<html>error</html>"
         """.strip()), output)
 
     def test_503_error_condition_page(self):
@@ -474,16 +478,16 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      condition.{ident}.name:                    "response-502-condition"
-      condition.{ident}.priority:                "5"
-      condition.{ident}.statement:               "beresp.status == 502 && req.http.Cookie:viewerror != \\"true\\""
-      condition.{ident}.type:                    "CACHE"
+      condition.{ident}.name:      "response-502-condition"
+      condition.{ident}.priority:  "5"
+      condition.{ident}.statement: "beresp.status == 502 && req.http.Cookie:viewerror != \\"true\\""
+      condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "964b63eac399fd8aaa928e8e74dc461b7cb0fdc5"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content: "d669e7c169ed1dab7d764b242cfc7e76c64ae3c8"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
 
     def test_503_error_condition(self):
@@ -501,10 +505,10 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-      condition.{ident}.name:                     "response-503-condition"
-      condition.{ident}.priority:                 "5"
-      condition.{ident}.statement:                "beresp.status == 503 && req.http.Cookie:viewerror != \\"true\\""
-      condition.{ident}.type:                     "CACHE"
+      condition.{ident}.name:      "response-503-condition"
+      condition.{ident}.priority:  "5"
+      condition.{ident}.statement: "beresp.status == 503 && req.http.Cookie:viewerror != \\"true\\""
+      condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 
     def test_ssl_cert_hostname(self):
@@ -522,7 +526,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-     backend.{ident}.ssl_cert_hostname:         "test-hostname"
+     backend.{ident}.ssl_cert_hostname: "test-hostname"
         """.strip()), output) # noqa
 
     def test_use_ssl(self):
@@ -540,7 +544,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
         assert re.search(template_to_re("""
-     backend.{ident}.use_ssl:                   "true"
+     backend.{ident}.use_ssl: "true"
         """.strip()), output) # noqa
 
 
@@ -560,9 +564,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "cfc34febb4106525e7a97fc683a07e49ac5fc889"
-      vcl.{ident}.main:                          "true"
-      vcl.{ident}.name:                          "custom_vcl"
+      vcl.{ident}.content: "0dc7e2b573af2470bd74a05b468e485b53843ddf"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_recv_added(self):
@@ -581,9 +585,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "651d4c4ceabbd8653d619a6810a2b4c16d5c4591"
-      vcl.{ident}.main:                           "true"
-      vcl.{ident}.name:                           "custom_vcl"
+      vcl.{ident}.content: "10c41fee21a716c084861dacb813186be6196611"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
 
     def test_custom_vcl_error_added(self):
@@ -602,9 +606,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                        "7ca7b5134ba45d3f0fb1ac2e93fe817c210ece9e"
-      vcl.{ident}.main:                           "true"
-      vcl.{ident}.name:                           "custom_vcl"
+      vcl.{ident}.content: "d7455608179f65c005fd970f49d4393ffc18353a"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
 
     def test_shield_default(self):
