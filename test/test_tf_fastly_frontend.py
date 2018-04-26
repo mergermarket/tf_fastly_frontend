@@ -348,7 +348,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         assert re.search(template_to_re("""
       condition.{ident}.name:      "prevent-caching"
       condition.{ident}.priority:  "5"
-      condition.{ident}.statement: "! true"
+      condition.{ident}.statement: "req.url !~ \\"^\\""
       condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 
@@ -378,7 +378,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         assert re.search(template_to_re("""
       condition.{ident}.name:      "prevent-caching"
       condition.{ident}.priority:  "5"
-      condition.{ident}.statement: "! false"
+      condition.{ident}.statement: "req.url ~ \\"^\\""
       condition.{ident}.type:      "CACHE"
         """.strip()), output) # noqa
 

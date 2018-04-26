@@ -42,7 +42,8 @@ resource "fastly_service_v1" "fastly" {
     name      = "prevent-caching"
     type      = "CACHE"
     priority  = 5
-    statement = "! ${var.caching}"
+    # if caching is on, then do not match and do not apply cache setting
+    statement = "req.url ${ var.caching == "true" ? "!" : "" }~ \"^\""
   }
 
   cache_setting {
