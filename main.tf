@@ -38,9 +38,17 @@ resource "fastly_service_v1" "fastly" {
     bypass_busy_wait = "${var.bypass_busy_wait}"
   }
 
+  condition {
+    name      = "prevent-caching"
+    type      = "CACHE"
+    priority  = 5
+    statement = "! ${var.caching}"
+  }
+
   cache_setting {
-    name   = "cache-setting"
-    action = "${var.caching == "false" ? "pass" : "cache"}"
+    name            = "cache-setting"
+    action          = "pass"
+    cache_condition = "prevent-caching"
   }
 
   # Override requests for /robots.txt for non-live environments
