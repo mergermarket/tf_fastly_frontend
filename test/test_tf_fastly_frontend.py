@@ -497,7 +497,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         """.strip()), output) # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "6470a8ef3c236fc8e2132471bbb7fc8d140ccee9"
+      vcl.{ident}.content: "85db226d39686f8b1652260d19972a40a02f0ddf"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -576,7 +576,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "3c68546c68b6aa396eca354485f83002a9c4044a"
+      vcl.{ident}.content: "d6875dac9d2670fd4713e20e296d9324809869fc"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -597,7 +597,49 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "fad831c931858196b721ecbf5bd24bfcd920a77b"
+      vcl.{ident}.content: "1e279c28eb9ad8e4a267943a50d93f8487ccf471"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
+        """.strip()), output) # noqa
+
+    def test_custom_vcl_recv_no_shield_added(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'custom_vcl_recv_no_shield=bar',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      vcl.{ident}.content: "eb624070d7924f63a09d72c4504e8937d59916ea"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
+        """.strip()), output) # noqa
+
+    def test_custom_vcl_recv_shield_only_added(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'custom_vcl_recv_shield_only=bar',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      vcl.{ident}.content: "ab951e01f3e6c3d582abf44e9adbf74e728263ec"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
@@ -618,7 +660,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "21902ce6cd738ade31c658c8e9a272a5b8dd3b26"
+      vcl.{ident}.content: "4c20ad859c18c8d03778f46659f5496744db32d2"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output) # noqa
