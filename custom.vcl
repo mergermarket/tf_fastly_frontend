@@ -7,9 +7,13 @@ ${custom_vcl_backends}
 sub vcl_recv {
 #FASTLY recv
 
-if (! req.http.fastly-ff) {
   ${custom_vcl_recv}
-}
+  if (! req.http.fastly-ff) {
+    ${custom_vcl_recv_no_shield}
+  }
+  if (req.http.fastly-ff) {
+    ${custom_vcl_recv_shield_only}
+  }
 
   if (req.request != "HEAD" && req.request != "GET" && req.request != "FASTLYPURGE") {
     return(pass);

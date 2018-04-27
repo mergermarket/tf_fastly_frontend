@@ -96,7 +96,19 @@ variable "custom_vcl_backends" {
 
 variable "custom_vcl_recv" {
   type        = "string"
-  description = "Custom VCL to add to the vcl_recv sub after the Fastly hook"
+  description = "Custom VCL to add to the vcl_recv sub after the Fastly hook - this will run regardess of whether running on a shield node"
+  default     = ""
+}
+
+variable "custom_vcl_recv_shield_only" {
+  type        = "string"
+  description = "Custom VCL to add to the vcl_recv sub after the Fastly hook, only on shield nodes"
+  default     = ""
+}
+
+variable "custom_vcl_recv_no_shield" {
+  type        = "string"
+  description = "Custom VCL to add to the vcl_recv sub after the Fastly hook, but not on shield nodes"
   default     = ""
 }
 

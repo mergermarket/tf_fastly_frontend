@@ -3,14 +3,16 @@
 module "fastly" {
   source = "../.."
 
-  domain_name               = "${var.domain_name}"
-  backend_address           = "${var.backend_address}"
-  env                       = "${var.env}"
-  bare_redirect_domain_name = "${var.bare_redirect_domain_name}"
-  proxy_error_response      = "${var.proxy_error_response}"
-  custom_vcl_backends       = "${var.custom_vcl_backends}"
-  custom_vcl_recv           = "${var.custom_vcl_recv}"
-  custom_vcl_error          = "${var.custom_vcl_error}"
+  domain_name                 = "${var.domain_name}"
+  backend_address             = "${var.backend_address}"
+  env                         = "${var.env}"
+  bare_redirect_domain_name   = "${var.bare_redirect_domain_name}"
+  proxy_error_response        = "${var.proxy_error_response}"
+  custom_vcl_backends         = "${var.custom_vcl_backends}"
+  custom_vcl_recv             = "${var.custom_vcl_recv}"
+  custom_vcl_recv_no_shield   = "${var.custom_vcl_recv_no_shield}"
+  custom_vcl_recv_shield_only = "${var.custom_vcl_recv_shield_only}"
+  custom_vcl_error            = "${var.custom_vcl_error}"
 }
 
 module "fastly_custom_timeouts" {
@@ -104,6 +106,14 @@ variable "custom_vcl_backends" {
 }
 
 variable "custom_vcl_recv" {
+  default = ""
+}
+
+variable "custom_vcl_recv_no_shield" {
+  default = ""
+}
+
+variable "custom_vcl_recv_shield_only" {
   default = ""
 }
 
