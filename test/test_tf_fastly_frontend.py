@@ -337,19 +337,9 @@ Plan: 3 to add, 0 to change, 0 to destroy.
             'test/infra'
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
+        # then
         assert re.search(template_to_re("""
-      cache_setting.{ident}.action:          "pass"
-      cache_setting.{ident}.cache_condition: "prevent-caching"
-      cache_setting.{ident}.name:            "cache-setting"
-      cache_setting.{ident}.stale_ttl:       ""
-      cache_setting.{ident}.ttl:             ""
-        """.strip()), output) # noqa
-
-        assert re.search(template_to_re("""
-      condition.{ident}.name:      "prevent-caching"
-      condition.{ident}.priority:  "5"
-      condition.{ident}.statement: "req.url !~ \\"^\\""
-      condition.{ident}.type:      "CACHE"
+      vcl.{ident}.content:                       "d74b2a0b3f4a7fc8a09d9d1a9d1261049bbb161d"
         """.strip()), output) # noqa
 
     def test_disable_caching(self):
@@ -368,18 +358,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      cache_setting.{ident}.action:          "pass"
-      cache_setting.{ident}.cache_condition: "prevent-caching"
-      cache_setting.{ident}.name:            "cache-setting"
-      cache_setting.{ident}.stale_ttl:       ""
-      cache_setting.{ident}.ttl:             ""
-        """.strip()), output) # noqa
-
-        assert re.search(template_to_re("""
-      condition.{ident}.name:      "prevent-caching"
-      condition.{ident}.priority:  "5"
-      condition.{ident}.statement: "req.url ~ \\"^\\""
-      condition.{ident}.type:      "CACHE"
+      vcl.{ident}.content:                       "baf93e86203d6212936d6659924ca81d8d58db85"
         """.strip()), output) # noqa
 
     def test_disable_force_ssl(self):
