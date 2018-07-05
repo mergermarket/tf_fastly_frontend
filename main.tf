@@ -30,26 +30,10 @@ resource "fastly_service_v1" "fastly" {
     content_types = ["text/html", "text/css", "application/json"]
   }
 
-  # Set force-miss (disables caching) and force-ssl (enables redirect from HTTP
-  # -> HTTPS for all requests) settings
   request_setting {
     name             = "request-setting"
     force_ssl        = "${var.force_ssl}"
     bypass_busy_wait = "${var.bypass_busy_wait}"
-  }
-
-  condition {
-    name      = "prevent-caching"
-    type      = "CACHE"
-    priority  = 5
-    # if caching is on, then do not match and do not apply cache setting
-    statement = "req.url ${ var.caching == "true" ? "!" : "" }~ \"^\""
-  }
-
-  cache_setting {
-    name            = "cache-setting"
-    action          = "pass"
-    cache_condition = "prevent-caching"
   }
 
   # Override requests for /robots.txt for non-live environments
@@ -152,6 +136,7 @@ data "template_file" "custom_vcl" {
     custom_vcl_recv_no_shield   = "${var.custom_vcl_recv_no_shield}"
     custom_vcl_recv_shield_only = "${var.custom_vcl_recv_shield_only}"
     custom_vcl_error            = "${var.custom_vcl_error}"
+    vcl_recv_default_action     = "${var.caching == "true" ? "lookup" : "pass"}"
   }
 }
 

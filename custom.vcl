@@ -19,7 +19,7 @@ sub vcl_recv {
     return(pass);
   }
 
-  return(lookup);
+  return(${vcl_recv_default_action});
 }
 
 sub vcl_fetch {
