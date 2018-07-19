@@ -62,6 +62,15 @@ module "fastly_set_shield" {
   shield          = "${var.shield}"
 }
 
+module "fastly_set_surrogate_key" {
+  source = "../.."
+
+  domain_name        = "${var.domain_name}"
+  backend_address    = "${var.backend_address}"
+  env                = "${var.env}"
+  surrogate_key_name = "${var.surrogate_key_name}"
+}
+
 # variables
 variable "domain_name" {}
 
@@ -122,5 +131,9 @@ variable "custom_vcl_error" {
 }
 
 variable "shield" {
+  default = ""
+}
+
+variable "surrogate_key_name" {
   default = ""
 }

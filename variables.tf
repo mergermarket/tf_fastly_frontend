@@ -129,3 +129,9 @@ variable "shield" {
   description = "PoP to use as an origin shield (e.g. london-uk for Slough)."
   default     = ""
 }
+
+variable "surrogate_key_name" {
+  type        = "string"
+  description = "Fastly surrogate key name"
+  default     = "default-surrogate-key"
+}

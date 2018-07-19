@@ -679,3 +679,80 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(r'backend.\d+.shield:\s+"test-shield"', output)
+
+    def test_default_surrogate_header(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-no-color',
+            '-target=module.fastly',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "surrogate-key-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "beresp.http.default-surrogate-key != \\"\\""
+      condition.{ident}.type:      "CACHE"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    "surrogate-key-condition"
+      header.{ident}.destination:        "http.Surrogate-Key"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Surrogate Key to Amazon"
+      header.{ident}.priority:           "10"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "beresp.http.default-surrogate-key"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
+        """.strip()), output)
+
+    def test_custom_surrogate_header(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'surrogate_key_name=my-custom-surrogate-key',
+            '-target=module.fastly_set_surrogate_key',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "surrogate-key-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "beresp.http.my-custom-surrogate-key != \\"\\""
+      condition.{ident}.type:      "CACHE"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    "surrogate-key-condition"
+      header.{ident}.destination:        "http.Surrogate-Key"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Surrogate Key to Amazon"
+      header.{ident}.priority:           "10"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "beresp.http.my-custom-surrogate-key"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
+        """.strip()), output)
