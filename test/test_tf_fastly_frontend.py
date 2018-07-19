@@ -106,22 +106,22 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       logentries.~{ident}.name:               "ci-www.domain.com"
       logentries.~{ident}.port:               "20000"
       logentries.~{ident}.response_condition: ""
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
       logentries.~{ident}.use_tls:               "true"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
   + module.fastly.logentries_log.logs
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
       name:             "ci-www.domain.com"
       retention_period: "ACCOUNT_DEFAULT"
       source:           "token"
       token:            <computed>
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_create_fastly_service_creates_redirection(self):
         # Given
@@ -156,7 +156,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         assert re.search(template_to_re("""
       header.{ident}.source: "\\"https://any-www.domain.com\\" + req.url"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert """
 Plan: 3 to add, 0 to change, 0 to destroy.
@@ -281,14 +281,14 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       response_object.{ident}.response:          "OK"
       response_object.{ident}.status:            "200"
 
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
       condition.{ident}.name:      "override-robots.txt-condition"
       condition.{ident}.priority:  "5"
       condition.{ident}.statement: "req.url ~ \\"^/robots.txt\\""
       condition.{ident}.type:      "REQUEST"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_force_ssl_enabled_by_default(self):
         # given
@@ -320,7 +320,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.request_condition: ""
       request_setting.{ident}.timer_support:     ""
       request_setting.{ident}.xff:               "append"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_caching_enabled_by_default(self):
         # given
@@ -340,7 +340,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         # then
         assert re.search(template_to_re("""
       vcl.{ident}.content:                       "d74b2a0b3f4a7fc8a09d9d1a9d1261049bbb161d"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_disable_caching(self):
         # when
@@ -359,7 +359,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
         # then
         assert re.search(template_to_re("""
       vcl.{ident}.content:                       "baf93e86203d6212936d6659924ca81d8d58db85"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_disable_force_ssl(self):
         # when
@@ -390,7 +390,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       request_setting.{ident}.request_condition: ""
       request_setting.{ident}.timer_support:     ""
       request_setting.{ident}.xff:               "append"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_custom_timeouts(self):
         # When
@@ -473,13 +473,13 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       condition.{ident}.priority:  "5"
       condition.{ident}.statement: "beresp.status == 502 && req.http.Cookie:viewerror != \\"true\\""
       condition.{ident}.type:      "CACHE"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
       vcl.{ident}.content: "85db226d39686f8b1652260d19972a40a02f0ddf"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_503_error_condition(self):
         # When
@@ -500,7 +500,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       condition.{ident}.priority:  "5"
       condition.{ident}.statement: "beresp.status == 503 && req.http.Cookie:viewerror != \\"true\\""
       condition.{ident}.type:      "CACHE"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_ssl_cert_hostname(self):
         # When
@@ -518,7 +518,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         assert re.search(template_to_re("""
      backend.{ident}.ssl_cert_hostname: "test-hostname"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_use_ssl(self):
         # When
@@ -536,8 +536,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         assert re.search(template_to_re("""
      backend.{ident}.use_ssl: "true"
-        """.strip()), output) # noqa
-
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_backends_added(self):
         # Given When
@@ -558,7 +557,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "d6875dac9d2670fd4713e20e296d9324809869fc"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_recv_added(self):
         # Given When
@@ -579,7 +578,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "1e279c28eb9ad8e4a267943a50d93f8487ccf471"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_recv_no_shield_added(self):
         # Given When
@@ -600,7 +599,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "eb624070d7924f63a09d72c4504e8937d59916ea"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_recv_shield_only_added(self):
         # Given When
@@ -621,7 +620,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "ab951e01f3e6c3d582abf44e9adbf74e728263ec"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_error_added(self):
         # Given When
@@ -642,7 +641,7 @@ Plan: 3 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "4c20ad859c18c8d03778f46659f5496744db32d2"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
-        """.strip()), output) # noqa
+        """.strip()), output)  # noqa
 
     def test_shield_default(self):
         # Given
@@ -680,3 +679,80 @@ Plan: 3 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(r'backend.\d+.shield:\s+"test-shield"', output)
+
+    def test_default_surrogate_header(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-no-color',
+            '-target=module.fastly',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "surrogate-key-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "beresp.http.default-surrogate-key != \\"\\""
+      condition.{ident}.type:      "CACHE"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    "surrogate-key-condition"
+      header.{ident}.destination:        "http.Surrogate-Key"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Surrogate Key to Amazon"
+      header.{ident}.priority:           "10"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "beresp.http.default-surrogate-key"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
+        """.strip()), output)
+
+    def test_custom_surrogate_header(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'surrogate_key_name=my-custom-surrogate-key',
+            '-target=module.fastly_set_surrogate_key',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "surrogate-key-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "beresp.http.my-custom-surrogate-key != \\"\\""
+      condition.{ident}.type:      "CACHE"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    "surrogate-key-condition"
+      header.{ident}.destination:        "http.Surrogate-Key"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Surrogate Key to Amazon"
+      header.{ident}.priority:           "10"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: ""
+      header.{ident}.source:             "beresp.http.my-custom-surrogate-key"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "cache"
+        """.strip()), output)

@@ -87,6 +87,13 @@ resource "fastly_service_v1" "fastly" {
     statement = "beresp.status == 502 && req.http.Cookie:viewerror != \"true\""
   }
 
+  condition {
+    name      = "surrogate-key-condition"
+    type      = "CACHE"
+    priority  = 10
+    statement = "beresp.http.${var.surrogate_key_name} != \"\""
+  }
+
   # Add the client ip
   header {
     name        = "Add X-Client-IP header"
@@ -110,6 +117,16 @@ resource "fastly_service_v1" "fastly" {
     type        = "cache"
     action      = "set"
     source      = "\"LHC\""
+  }
+
+  header {
+    name            = "Surrogate Key to Amazon"
+    destination     = "http.Surrogate-Key"
+    type            = "cache"
+    action          = "set"
+    source          = "beresp.http.${var.surrogate_key_name}"
+    cache_condition = "surrogate-key-condition"
+    priority        = 10
   }
 
   vcl {
