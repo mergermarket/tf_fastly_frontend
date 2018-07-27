@@ -1,14 +1,10 @@
-data "aws_secretsmanager_secret" "secret"{
-  name = "tf_fastly_frontend/aslive/fastly-to-datadog-api"
-}
-
-data "aws_secretsmanager_secret_version" "secret_kv_pair" {
-  secret_id = "${data.aws_secretsmanager_secret.secret.id}"
+module "secretsmanager" {
+  source = "./modules/secretsmanager.tf"
 }
 
 locals {
   full_domain_name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
-  datadog_api_key  = "${data.aws_secretsmanager_secret_version.secret_kv_pair.secret_string}"
+  datadog_api_key  = "${module.secretsmanager.secret}"
   tls_ca_cert     = <<END
 -----BEGIN CERTIFICATE-----
 MIIESTCCAzGgAwIBAgITBn+UV4WH6Kx33rJTMlu8mYtWDTANBgkqhkiG9w0BAQsF
