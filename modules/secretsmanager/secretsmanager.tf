@@ -6,6 +6,6 @@ data "aws_secretsmanager_secret_version" "secret" {
   secret_id = "${data.aws_secretsmanager_secret.secret.id}"
 }
 
-output "secret" {
+output "datadog_api_key" {
     value = "${data.aws_secretsmanager_secret_version.secret.secret_string}"
 }

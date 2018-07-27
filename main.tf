@@ -4,7 +4,6 @@ module "secretsmanager" {
 
 locals {
   full_domain_name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
-  datadog_api_key  = "${module.secretsmanager.secret}"
   tls_ca_cert     = <<END
 -----BEGIN CERTIFICATE-----
 MIIESTCCAzGgAwIBAgITBn+UV4WH6Kx33rJTMlu8mYtWDTANBgkqhkiG9w0BAQsF
@@ -33,7 +32,6 @@ yLyKQXhw2W2Xs0qLeC1etA+jTGDK4UfLeC0SF7FSi8o5LL21L8IzApar2pR/
 -----END CERTIFICATE-----
 END
 }
-
 
 
 resource "fastly_service_v1" "fastly" {
@@ -168,7 +166,7 @@ resource "fastly_service_v1" "fastly" {
     address         = "intake.logs.datadoghq.com"
     port            = "10516"
     message_type    = "blank"
-    format          = "${local.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
+    format          = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
     format_version  = "2"
     use_tls         = true
     tls_hostname    = "intake.logs.datadoghq.com"
@@ -237,7 +235,7 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     address         = "intake.logs.datadoghq.com"
     port            = "10516"
     message_type    = "blank"
-    format          = "${local.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
+    format          = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
     format_version  = "2"
     use_tls         = true
     tls_hostname    = "intake.logs.datadoghq.com"
