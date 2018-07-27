@@ -1,5 +1,5 @@
 module "secretsmanager" {
-  source = "./modules/secretsmanager.tf"
+  source = "./modules/secretsmanager"
 }
 
 locals {
