@@ -9,10 +9,11 @@ data "aws_secretsmanager_secret_version" "secret" {
 }
 
 output "datadog_api_key" {
-    value = "${data.aws_secretsmanager_secret_version.secret.secret_string}"
+    //value = "${false ? data.aws_secretsmanager_secret_version.secret.*.secret_string : "123456"}"
+    value = "${element(concat(data.aws_secretsmanager_secret_version.secret.*.secret_string, list("")), 0)}"
 }
 
 variable "run_data" {
-   description = "Used to switch off data resources when unit testing"
-   default     = true
+    description = "Used to switch off data resources when unit testing"
+    default     = false
 }

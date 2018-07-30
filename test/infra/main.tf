@@ -26,6 +26,7 @@ module "fastly" {
   custom_vcl_recv_no_shield   = "${var.custom_vcl_recv_no_shield}"
   custom_vcl_recv_shield_only = "${var.custom_vcl_recv_shield_only}"
   custom_vcl_error            = "${var.custom_vcl_error}"
+  run_data                    = false
 }
 
 module "fastly_custom_timeouts" {
@@ -37,6 +38,8 @@ module "fastly_custom_timeouts" {
   connect_timeout       = "${var.connect_timeout}"
   first_byte_timeout    = "${var.first_byte_timeout}"
   between_bytes_timeout = "${var.between_bytes_timeout}"
+  run_data              = false
+
 }
 
 module "fastly_disable_caching" {
@@ -46,6 +49,8 @@ module "fastly_disable_caching" {
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
   caching         = "${var.caching}"
+  run_data        = false
+
 }
 
 module "fastly_disable_force_ssl" {
@@ -55,6 +60,7 @@ module "fastly_disable_force_ssl" {
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
   force_ssl       = "${var.force_ssl}"
+  run_data        = false
 }
 
 module "fastly_ssl_cert_hostname" {
@@ -64,6 +70,7 @@ module "fastly_ssl_cert_hostname" {
   backend_address   = "${var.backend_address}"
   env               = "${var.env}"
   ssl_cert_hostname = "${var.ssl_cert_hostname}"
+  run_data          = false
 }
 
 module "fastly_set_shield" {
@@ -73,6 +80,7 @@ module "fastly_set_shield" {
   backend_address = "${var.backend_address}"
   env             = "${var.env}"
   shield          = "${var.shield}"
+  run_data        = false
 }
 
 module "fastly_set_surrogate_key" {
@@ -82,6 +90,7 @@ module "fastly_set_surrogate_key" {
   backend_address    = "${var.backend_address}"
   env                = "${var.env}"
   surrogate_key_name = "${var.surrogate_key_name}"
+  run_data           = false
 }
 
 # variables
