@@ -4,7 +4,6 @@ COPY requirements.txt .
 ENV TERRAFORM_VERSION=0.11.7
 
 ENV TERRAFORM_PROVIDER_FASTLY_VERSION=0.1.4
-ENV TERRAFORM_PROVIDER_LOGENTRIES_VERSION=0.1.0_logset_datasource
 
 RUN echo http://dl-cdn.alpinelinux.org/alpine/latest-stable/main >> /etc/apk/repositories
 RUN apk update
@@ -17,8 +16,6 @@ RUN mkdir -p "${TERRAFORM_PLUGIN_DIR}" && cd /tmp && \
         unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -d /usr/bin && \
     curl -sSLO "https://releases.hashicorp.com/terraform-provider-fastly/$TERRAFORM_PROVIDER_FASTLY_VERSION/terraform-provider-fastly_${TERRAFORM_PROVIDER_FASTLY_VERSION}_linux_amd64.zip" && \
         unzip "terraform-provider-fastly_${TERRAFORM_PROVIDER_FASTLY_VERSION}_linux_amd64.zip" -d "${TERRAFORM_PLUGIN_DIR}" && \
-    wget -q "https://s3-eu-west-1.amazonaws.com/mmg-terraform-providers/terraform-provider-logentries_v${TERRAFORM_PROVIDER_LOGENTRIES_VERSION}_linux_amd64.zip" && \
-        unzip "terraform-provider-logentries_v${TERRAFORM_PROVIDER_LOGENTRIES_VERSION}_linux_amd64.zip" -d "${TERRAFORM_PLUGIN_DIR}" && \
     rm -rf /tmp/* && \
     rm -rf /var/tmp/*
 
