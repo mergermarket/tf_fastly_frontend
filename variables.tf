@@ -135,3 +135,4 @@ variable "surrogate_key_name" {
   description = "Fastly surrogate key name"
   default     = "default-surrogate-key"
 }
+
