@@ -15,5 +15,5 @@ output "datadog_api_key" {
 
 variable "run_data" {
     description = "Used to switch off data resources when unit testing"
-    default     = false
+    default     = true
 }
