@@ -67,6 +67,7 @@ class TestTFFastlyFrontend(unittest.TestCase):
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
+            '-var', 'run_data=false',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -80,10 +81,10 @@ class TestTFFastlyFrontend(unittest.TestCase):
         """.strip()), output)
 
         assert """
-Plan: 2 to add, 0 to change, 0 to destroy.
+Plan: 1 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
-    def test_fastly_logging_config(self):
+    def test_syslog_logging_config(self):
         # Given
 
         # When
@@ -100,28 +101,19 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      logentries.#:                              "1"
-      logentries.~{ident}.format:             "%h %l %u %t %r %>s"
-      logentries.~{ident}.format_version:     "1"
-      logentries.~{ident}.name:               "ci-www.domain.com"
-      logentries.~{ident}.port:               "20000"
-      logentries.~{ident}.response_condition: ""
-        """.strip()), output)  # noqa
+        syslog.#:                                     "1"
+        syslog.{ident}.address:                     "intake.logs.datadoghq.com"
+        syslog.{ident}.format:                      " '%h %l %u %t \\"%r\\" %>s %b'"
+        syslog.{ident}.format_version:              "2"
+        syslog.{ident}.message_type:                "blank"
+        syslog.{ident}.name:                        "ci-www.domain.com"
+        syslog.{ident}.port:                        "10516"
+        syslog.{ident}.response_condition:          ""
+          """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
-      logentries.~{ident}.use_tls:               "true"
-        """.strip()), output)  # noqa
-
-        assert re.search(template_to_re("""
-  + module.fastly.logentries_log.logs
-        """.strip()), output)  # noqa
-
-        assert re.search(template_to_re("""
-      name:             "ci-www.domain.com"
-      retention_period: "ACCOUNT_DEFAULT"
-      source:           "token"
-      token:            <computed>
-        """.strip()), output)  # noqa
+        syslog.{ident}.use_tls:                     "true"
+          """.strip()), output)  # noqa
 
     def test_create_fastly_service_creates_redirection(self):
         # Given
@@ -159,7 +151,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip()), output)  # noqa
 
         assert """
-Plan: 3 to add, 0 to change, 0 to destroy.
+Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip() in output
 
     def test_x_client_ip_header(self):

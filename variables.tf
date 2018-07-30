@@ -135,3 +135,8 @@ variable "surrogate_key_name" {
   description = "Fastly surrogate key name"
   default     = "default-surrogate-key"
 }
+
+variable "run_data" {
+   description = "Used to switch off data resources when unit testing"
+   default     = true
+}
