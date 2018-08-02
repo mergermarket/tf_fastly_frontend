@@ -9,7 +9,6 @@ data "aws_secretsmanager_secret_version" "secret" {
 }
 
 output "datadog_api_key" {
-    //value = "${false ? data.aws_secretsmanager_secret_version.secret.*.secret_string : "123456"}"
     value = "${element(concat(data.aws_secretsmanager_secret_version.secret.*.secret_string, list("")), 0)}"
 }
 
