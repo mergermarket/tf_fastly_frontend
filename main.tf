@@ -194,6 +194,7 @@ data "template_file" "custom_vcl" {
     custom_vcl_recv_no_shield   = "${var.custom_vcl_recv_no_shield}"
     custom_vcl_recv_shield_only = "${var.custom_vcl_recv_shield_only}"
     custom_vcl_error            = "${var.custom_vcl_error}"
+    custom_vcl_deliver          = "${var.custom_vcl_deliver}"
     vcl_recv_default_action     = "${var.caching == "true" ? "lookup" : "pass"}"
   }
 }
