@@ -76,6 +76,9 @@ sub vcl_miss {
 
 sub vcl_deliver {
 #FASTLY deliver
+
+  ${custom_vcl_deliver}
+
   return(deliver);
 }
 
@@ -87,7 +90,7 @@ sub vcl_error {
    synthetic {"${proxy_error_response}"};
    return(deliver);
  }
- 
+
   ${custom_vcl_error}
 }
 
