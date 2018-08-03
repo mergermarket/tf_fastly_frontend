@@ -331,7 +331,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "d74b2a0b3f4a7fc8a09d9d1a9d1261049bbb161d"
+      vcl.{ident}.content:                       "6caf169c407fb2e68d33243432d96c0ba6fe4323"
         """.strip()), output)  # noqa
 
     def test_disable_caching(self):
@@ -350,7 +350,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # then
         assert re.search(template_to_re("""
-      vcl.{ident}.content:                       "baf93e86203d6212936d6659924ca81d8d58db85"
+      vcl.{ident}.content:                       "8851488a35d5359b02625da1ec8bef71b2cc8476"
         """.strip()), output)  # noqa
 
     def test_disable_force_ssl(self):
@@ -468,7 +468,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "85db226d39686f8b1652260d19972a40a02f0ddf"
+      vcl.{ident}.content: "b930849feae59bd5b1082bde0d72bbe81aa556da"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -546,7 +546,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "d6875dac9d2670fd4713e20e296d9324809869fc"
+      vcl.{ident}.content: "ee2f01cc4ee235e7ef37f83aaabe7a25f639e912"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -567,7 +567,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "1e279c28eb9ad8e4a267943a50d93f8487ccf471"
+      vcl.{ident}.content: "bf8d6b769da92acf27ce64e3fc1856c8e449e650"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -588,7 +588,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "eb624070d7924f63a09d72c4504e8937d59916ea"
+      vcl.{ident}.content: "597fbc642654bb3d25c5f574a09b8a951c18eedc"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -609,7 +609,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "ab951e01f3e6c3d582abf44e9adbf74e728263ec"
+      vcl.{ident}.content: "6d3537dfae784706c60dcaef0599866682ca495f"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -630,7 +630,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 
         # Then
         assert re.search(template_to_re("""
-      vcl.{ident}.content: "4c20ad859c18c8d03778f46659f5496744db32d2"
+      vcl.{ident}.content: "cca651119ccfbc450f3e29cd949deebaf9219653"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
@@ -748,3 +748,24 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       header.{ident}.substitution:       <computed>
       header.{ident}.type:               "cache"
         """.strip()), output)
+
+    def test_custom_vcl_deliver_added(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'custom_vcl_deliver=foo',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      vcl.{ident}.content: "f561d04db6e31f6023ce51d4a167655bff049f31"
+      vcl.{ident}.main:    "true"
+      vcl.{ident}.name:    "custom_vcl"
+        """.strip()), output)  # noqa
