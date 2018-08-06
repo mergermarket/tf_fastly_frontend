@@ -708,7 +708,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       header.{ident}.source:             "beresp.http.default-surrogate-key"
       header.{ident}.substitution:       <computed>
       header.{ident}.type:               "cache"
-        """.strip()), output)
+        """.strip()), output)  # noqa
 
     def test_custom_surrogate_header(self):
         # Given
@@ -747,7 +747,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       header.{ident}.source:             "beresp.http.my-custom-surrogate-key"
       header.{ident}.substitution:       <computed>
       header.{ident}.type:               "cache"
-        """.strip()), output)
+        """.strip()), output)  # noqa
 
     def test_custom_vcl_deliver_added(self):
         # Given When
@@ -768,4 +768,52 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       vcl.{ident}.content: "f561d04db6e31f6023ce51d4a167655bff049f31"
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
+        """.strip()), output)  # noqa
+
+    def test_custom_redirect(self):
+        # Given
+
+        # When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'redirect_request_condition_statement=req.url ~ \"^/test\"',
+            '-var', 'redirect_header_name=super-redirect-header',
+            '-var', 'redirect_response_condition_statement=req.url ~ \"^/test\" && resp.status == 301',
+            '-target=module.fastly_set_redirect',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "redirect-request-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "req.url ~ \\"^/test\\""
+      condition.{ident}.type:      "REQUEST"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      condition.{ident}.name:      "redirect-response-condition"
+      condition.{ident}.priority:  "10"
+      condition.{ident}.statement: "req.url ~ \\"^/test\\" && resp.status == 301"
+      condition.{ident}.type:      "RESPONSE"
+          """.strip()), output)  # noqa
+
+        assert re.search(template_to_re("""
+      header.{ident}.action:             "set"
+      header.{ident}.cache_condition:    ""
+      header.{ident}.destination:        "http.Location"
+      header.{ident}.ignore_if_set:      "false"
+      header.{ident}.name:               "Location for redirect"
+      header.{ident}.priority:           "10"
+      header.{ident}.regex:              <computed>
+      header.{ident}.request_condition:  ""
+      header.{ident}.response_condition: "redirect-response-condition"
+      header.{ident}.source:             "beresp.http.super-redirect-header"
+      header.{ident}.substitution:       <computed>
+      header.{ident}.type:               "response"
         """.strip()), output)  # noqa
