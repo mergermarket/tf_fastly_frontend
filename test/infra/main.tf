@@ -40,7 +40,6 @@ module "fastly_custom_timeouts" {
   first_byte_timeout    = "${var.first_byte_timeout}"
   between_bytes_timeout = "${var.between_bytes_timeout}"
   run_data              = false
-
 }
 
 module "fastly_disable_caching" {
@@ -51,7 +50,6 @@ module "fastly_disable_caching" {
   env             = "${var.env}"
   caching         = "${var.caching}"
   run_data        = false
-
 }
 
 module "fastly_disable_force_ssl" {
@@ -92,6 +90,19 @@ module "fastly_set_surrogate_key" {
   env                = "${var.env}"
   surrogate_key_name = "${var.surrogate_key_name}"
   run_data           = false
+}
+
+module "fastly_set_redirect" {
+  source = "../.."
+
+  domain_name                           = "${var.domain_name}"
+  backend_address                       = "${var.backend_address}"
+  env                                   = "${var.env}"
+  surrogate_key_name                    = "${var.surrogate_key_name}"
+  redirect_request_condition_statement  = "${var.redirect_request_condition_statement}"
+  redirect_header_name                  = "${var.redirect_header_name}"
+  redirect_response_condition_statement = "${var.redirect_response_condition_statement}"
+  run_data                              = false
 }
 
 # variables
@@ -163,4 +174,16 @@ variable "shield" {
 
 variable "surrogate_key_name" {
   default = ""
+}
+
+variable "redirect_request_condition_statement" {
+  default = "req.url ~ \"^/undefinedurl\""
+}
+
+variable "redirect_header_name" {
+  default = "undefinedredirectheader"
+}
+
+variable "redirect_response_condition_statement" {
+  default = "req.url ~ \"^/undefinedurl\" && resp.status == 301"
 }
