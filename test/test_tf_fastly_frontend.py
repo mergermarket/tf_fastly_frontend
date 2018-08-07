@@ -769,3 +769,22 @@ Plan: 2 to add, 0 to change, 0 to destroy.
       vcl.{ident}.main:    "true"
       vcl.{ident}.name:    "custom_vcl"
         """.strip()), output)  # noqa
+
+    def test_explicit_default_host(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+        default_host: "ci-www.domain.com"
+        """.strip()), output)  # noqa
+        #default_host:                                 "ci-www.domain.com"\n'
