@@ -163,7 +163,7 @@ resource "fastly_service_v1" "fastly" {
   }
 
   syslog {
-    name            = "${local.full_domain_name}"
+    name            = "${local.full_domain_name}-syslog"
     address         = "intake.logs.datadoghq.com"
     port            = "10516"
     message_type    = "blank"
