@@ -106,7 +106,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         syslog.{ident}.format:                      " '%h %l %u %t \\"%r\\" %>s %b'"
         syslog.{ident}.format_version:              "2"
         syslog.{ident}.message_type:                "blank"
-        syslog.{ident}.name:                        "ci-www.domain.com"
+        syslog.{ident}.name:                        "ci-www.domain.com-syslog"
         syslog.{ident}.port:                        "10516"
         syslog.{ident}.response_condition:          ""
           """.strip()), output)  # noqa
