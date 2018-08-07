@@ -143,24 +143,6 @@ variable "surrogate_key_name" {
 }
 
 variable "run_data" {
-  description = "Used to switch off data resources when unit testing"
-  default     = true
-}
-
-variable "redirect_request_condition_statement" {
-  type        = "string"
-  description = "Redirect request condition statement. See: https://docs.fastly.com/guides/performance-tuning/generating-http-redirects-at-the-edge.html"
-  default     = "req.url ~ \"^/undefinedurl\""
-}
-
-variable "redirect_header_name" {
-  type        = "string"
-  description = "Redirect header name. See: https://docs.fastly.com/guides/performance-tuning/generating-http-redirects-at-the-edge.html"
-  default     = "undefinedredirectheader"
-}
-
-variable "redirect_response_condition_statement" {
-  type        = "string"
-  description = "Redirect response condition statement. See: https://docs.fastly.com/guides/performance-tuning/generating-http-redirects-at-the-edge.html"
-  default     = "req.url ~ \"^/undefinedurl\" && resp.status == 301"
+   description = "Used to switch off data resources when unit testing"
+   default     = true
 }

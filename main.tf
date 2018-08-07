@@ -5,8 +5,7 @@ module "secretsmanager" {
 
 locals {
   full_domain_name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
-
-  tls_ca_cert = <<END
+  tls_ca_cert     = <<END
 -----BEGIN CERTIFICATE-----
 MIIESTCCAzGgAwIBAgITBn+UV4WH6Kx33rJTMlu8mYtWDTANBgkqhkiG9w0BAQsF
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
@@ -34,6 +33,7 @@ yLyKQXhw2W2Xs0qLeC1etA+jTGDK4UfLeC0SF7FSi8o5LL21L8IzApar2pR/
 -----END CERTIFICATE-----
 END
 }
+
 
 resource "fastly_service_v1" "fastly" {
   name = "${var.env}-${var.domain_name}"
@@ -127,48 +127,6 @@ resource "fastly_service_v1" "fastly" {
     statement = "beresp.http.${var.surrogate_key_name} != \"\""
   }
 
-  header {
-    name            = "Surrogate Key to Amazon"
-    destination     = "http.Surrogate-Key"
-    type            = "cache"
-    action          = "set"
-    source          = "beresp.http.${var.surrogate_key_name}"
-    cache_condition = "surrogate-key-condition"
-    priority        = 10
-  }
-
-  # Redirect response, conditions and header
-  response_object {
-    name              = "redirect-response"
-    status            = 301
-    response          = "Moved Permanently"
-    request_condition = "redirect-request-condition"
-  }
-
-  condition {
-    name      = "redirect-request-condition"
-    type      = "REQUEST"
-    priority  = 10
-    statement = "${var.redirect_request_condition_statement}"
-  }
-
-  header {
-    name               = "Location for redirect"
-    destination        = "http.Location"
-    type               = "response"
-    action             = "set"
-    source             = "beresp.http.${var.redirect_header_name}"
-    response_condition = "redirect-response-condition"
-    priority           = 10
-  }
-
-  condition {
-    name      = "redirect-response-condition"
-    type      = "RESPONSE"
-    priority  = 10
-    statement = "${var.redirect_response_condition_statement}"
-  }
-
   # Add the client ip
   header {
     name        = "Add X-Client-IP header"
@@ -194,16 +152,26 @@ resource "fastly_service_v1" "fastly" {
     source      = "\"LHC\""
   }
 
+  header {
+    name            = "Surrogate Key to Amazon"
+    destination     = "http.Surrogate-Key"
+    type            = "cache"
+    action          = "set"
+    source          = "beresp.http.${var.surrogate_key_name}"
+    cache_condition = "surrogate-key-condition"
+    priority        = 10
+  }
+
   syslog {
-    name           = "${local.full_domain_name}"
-    address        = "intake.logs.datadoghq.com"
-    port           = "10516"
-    message_type   = "blank"
-    format         = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
-    format_version = "2"
-    use_tls        = true
-    tls_hostname   = "intake.logs.datadoghq.com"
-    tls_ca_cert    = "${local.tls_ca_cert}"
+    name            = "${local.full_domain_name}"
+    address         = "intake.logs.datadoghq.com"
+    port            = "10516"
+    message_type    = "blank"
+    format          = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
+    format_version  = "2"
+    use_tls         = true
+    tls_hostname    = "intake.logs.datadoghq.com"
+    tls_ca_cert     = "${local.tls_ca_cert}"
   }
 
   vcl {
@@ -213,6 +181,7 @@ resource "fastly_service_v1" "fastly" {
   }
 
   force_destroy = true
+
 }
 
 data "template_file" "custom_vcl" {
@@ -264,14 +233,14 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
   }
 
   syslog {
-    name           = "${local.full_domain_name}"
-    address        = "intake.logs.datadoghq.com"
-    port           = "10516"
-    message_type   = "blank"
-    format         = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
-    format_version = "2"
-    use_tls        = true
-    tls_hostname   = "intake.logs.datadoghq.com"
-    tls_ca_cert    = "${local.tls_ca_cert}"
+    name            = "${local.full_domain_name}"
+    address         = "intake.logs.datadoghq.com"
+    port            = "10516"
+    message_type    = "blank"
+    format          = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
+    format_version  = "2"
+    use_tls         = true
+    tls_hostname    = "intake.logs.datadoghq.com"
+    tls_ca_cert     = "${local.tls_ca_cert}"
   }
 }
