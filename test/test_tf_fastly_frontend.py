@@ -787,4 +787,3 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         assert re.search(template_to_re("""
         default_host: "ci-www.domain.com"
         """.strip()), output)  # noqa
-        #default_host:                                 "ci-www.domain.com"\n'
