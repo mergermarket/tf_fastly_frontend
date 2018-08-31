@@ -146,3 +146,8 @@ variable "run_data" {
    description = "Used to switch off data resources when unit testing"
    default     = true
 }
+
+variable "override_host" {
+   description = "Used to enable or disable setting of default_host (Override host in UI) value"
+   default     = "true"
+}

@@ -1,3 +1,5 @@
 .cache
 .terraform
 .idea
+terraform.tfstate
+.terraform.tfstate.lock.info

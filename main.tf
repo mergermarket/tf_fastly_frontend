@@ -42,7 +42,7 @@ resource "fastly_service_v1" "fastly" {
     name = "${local.full_domain_name}"
   }
 
-  default_host = "${local.full_domain_name}"
+  default_host = "${var.override_host == "true" ? local.full_domain_name : ""}"
   default_ttl = 60
 
   backend {
