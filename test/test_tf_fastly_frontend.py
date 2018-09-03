@@ -778,6 +778,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
             '-var', 'domain_name=www.domain.com',
             '-var', 'backend_address=1.1.1.1',
             '-var', 'env=ci',
+            '-var', 'override_host=false',
             '-target=module.fastly',
             '-no-color',
             'test/infra'
@@ -786,4 +787,23 @@ Plan: 2 to add, 0 to change, 0 to destroy.
         # Then
         assert re.search(template_to_re("""
         default_host: "ci-www.domain.com"
+        """.strip()), output)  # noqa
+
+    def test_override_host_disabled(self):
+        # Given When
+        output = check_output([
+            'terraform',
+            'plan',
+            '-var', 'domain_name=www.domain.com',
+            '-var', 'backend_address=1.1.1.1',
+            '-var', 'env=ci',
+            '-var', 'override_host=false',
+            '-target=module.fastly',
+            '-no-color',
+            'test/infra'
+        ], env=self._env_for_check_output('qwerty')).decode('utf-8')
+
+        # Then
+        assert re.search(template_to_re("""
+        default_host: ""
         """.strip()), output)  # noqa
