@@ -1,3 +1,5 @@
+provider "logentries" {}
+
 module "secretsmanager" {
   source   = "./modules/secretsmanager"
   run_data = "${var.run_data}"
