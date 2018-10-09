@@ -1,6 +1,7 @@
 module "secretsmanager" {
   source   = "./modules/secretsmanager"
   run_data = "${var.run_data}"
+  env      = "${var.env}"
 }
 
 locals {
