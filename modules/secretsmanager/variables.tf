@@ -4,5 +4,5 @@ variable "run_data" {
 }
 
 variable "env" {
-    
+    description = "Environment"
 }
