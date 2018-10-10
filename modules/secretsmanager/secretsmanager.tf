@@ -1,6 +1,6 @@
 data "aws_secretsmanager_secret" "secret"{
     count = "${var.run_data}"
-    name = "tf_fastly_frontend/${var.env}/fastly-to-datadog-api"
+    name = "tf_fastly_frontend/${var.env == "live" ? "live" : "aslive"}/fastly-to-datadog-api"
 }
 
 data "aws_secretsmanager_secret_version" "secret" {
