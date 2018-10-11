@@ -1,6 +1,5 @@
 FROM python:3-alpine3.7
 COPY requirements.txt .
-COPY pycharm-debug-py3k.egg .
 
 ENV TERRAFORM_VERSION=0.11.7
 
