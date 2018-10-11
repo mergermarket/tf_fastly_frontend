@@ -1,6 +1,6 @@
-resource "data" "dd_log_format" {
+{
   "ddsource": "fastly",
-  "service": "%{Fastly-Orig-Host}i",
+  "service": "%{req.http.host}V",
   "date": "%{begin:%Y-%m-%dT%H:%M:%S%Z}t",
   "time_start": "%{begin:%Y-%m-%dT%H:%M:%S%Z}t",
   "time_end": "%{end:%Y-%m-%dT%H:%M:%S%Z}t",
