@@ -103,7 +103,13 @@ Plan: 1 to add, 0 to change, 0 to destroy.
         assert re.search(template_to_re("""
         syslog.#:                                     "1"
         syslog.{ident}.address:                     "intake.logs.datadoghq.com"
-        syslog.{ident}.format:                      " '%h %l %u %t \\"%r\\" %>s %b'"
+          """.strip()), output)  # noqa
+
+        assert re.search("""
+        syslog.*.format:                     \" {  \\\\\"ddsource\\\\\": \\\\\"fastly\\\\\",  \\\\\"service\\\\\": \\\\\"%{req.http.host}V\\\\\"
+          """.strip(), output)  # noqa
+
+        assert re.search(template_to_re("""
         syslog.{ident}.format_version:              "2"
         syslog.{ident}.message_type:                "blank"
         syslog.{ident}.name:                        "ci-www.domain.com-syslog"

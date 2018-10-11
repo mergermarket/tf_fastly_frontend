@@ -171,7 +171,7 @@ resource "fastly_service_v1" "fastly" {
     address         = "intake.logs.datadoghq.com"
     port            = "10516"
     message_type    = "blank"
-    format          = "${module.secretsmanager.datadog_api_key} '%h %l %u %t \"%r\" %>s %b'"
+    format          = "${module.secretsmanager.datadog_api_key} ${replace(data.template_file.container_definitions.rendered, "\n", "")}"
     format_version  = "2"
     use_tls         = true
     tls_hostname    = "intake.logs.datadoghq.com"
@@ -247,4 +247,8 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
     tls_hostname    = "intake.logs.datadoghq.com"
     tls_ca_cert     = "${local.tls_ca_cert}"
   }
+}
+
+data "template_file" "container_definitions" {
+  template = "${file("${path.module}/dd_log_format.json")}"
 }
