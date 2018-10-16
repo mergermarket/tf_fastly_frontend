@@ -71,7 +71,7 @@ resource "fastly_service_v1" "fastly" {
     name             = "request-setting"
     force_ssl        = "${var.force_ssl}"
     bypass_busy_wait = "${var.bypass_busy_wait}"
-    hash_keys        = "req.url, req.http.host, req.http.Fastly-SSL, req.backend"
+    hash_keys        = "req.url, req.http.host, req.backend"
   }
 
   # Override requests for /robots.txt for non-live environments
