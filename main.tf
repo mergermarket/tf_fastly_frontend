@@ -131,6 +131,13 @@ resource "fastly_service_v1" "fastly" {
     statement = "beresp.http.${var.surrogate_key_name} != \"\""
   }
 
+  condition {
+    name      = "syslog-no-shield-condition"
+    type      = "RESPONSE"
+    priority  = 10
+    statement = "!req.http.Fastly-FF"
+  }
+
   # Add the client ip
   header {
     name        = "Add X-Client-IP header"
@@ -176,6 +183,7 @@ resource "fastly_service_v1" "fastly" {
     use_tls         = true
     tls_hostname    = "intake.logs.datadoghq.com"
     tls_ca_cert     = "${local.tls_ca_cert}"
+    response_condition = "syslog-no-shield-condition"
   }
 
   vcl {
