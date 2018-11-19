@@ -40,7 +40,6 @@ module "fastly_custom_timeouts" {
   first_byte_timeout    = "${var.first_byte_timeout}"
   between_bytes_timeout = "${var.between_bytes_timeout}"
   run_data              = false
-
 }
 
 module "fastly_disable_caching" {
@@ -51,7 +50,6 @@ module "fastly_disable_caching" {
   env             = "${var.env}"
   caching         = "${var.caching}"
   run_data        = false
-
 }
 
 module "fastly_disable_force_ssl" {

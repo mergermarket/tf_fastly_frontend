@@ -8,7 +8,8 @@ module "secretsmanager" {
 
 locals {
   full_domain_name = "${var.env == "live" ? "" : format("%s-", var.env)}${var.domain_name}"
-  tls_ca_cert     = <<END
+
+  tls_ca_cert = <<END
 -----BEGIN CERTIFICATE-----
 MIIESTCCAzGgAwIBAgITBn+UV4WH6Kx33rJTMlu8mYtWDTANBgkqhkiG9w0BAQsF
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
@@ -37,7 +38,6 @@ yLyKQXhw2W2Xs0qLeC1etA+jTGDK4UfLeC0SF7FSi8o5LL21L8IzApar2pR/
 END
 }
 
-
 resource "fastly_service_v1" "fastly" {
   name = "${var.env}-${var.domain_name}"
 
@@ -46,7 +46,7 @@ resource "fastly_service_v1" "fastly" {
   }
 
   default_host = "${var.override_host == "true" ? local.full_domain_name : ""}"
-  default_ttl = 60
+  default_ttl  = 60
 
   backend {
     address               = "${var.backend_address}"
@@ -174,15 +174,15 @@ resource "fastly_service_v1" "fastly" {
   }
 
   syslog {
-    name            = "${local.full_domain_name}-syslog"
-    address         = "intake.logs.datadoghq.com"
-    port            = "10516"
-    message_type    = "blank"
-    format          = "${module.secretsmanager.datadog_api_key} ${replace(data.template_file.container_definitions.rendered, "\n", "")}"
-    format_version  = "2"
-    use_tls         = true
-    tls_hostname    = "intake.logs.datadoghq.com"
-    tls_ca_cert     = "${local.tls_ca_cert}"
+    name               = "${local.full_domain_name}-syslog"
+    address            = "intake.logs.datadoghq.com"
+    port               = "10516"
+    message_type       = "blank"
+    format             = "${module.secretsmanager.datadog_api_key} ${replace(data.template_file.container_definitions.rendered, "\n", "")}"
+    format_version     = "2"
+    use_tls            = true
+    tls_hostname       = "intake.logs.datadoghq.com"
+    tls_ca_cert        = "${local.tls_ca_cert}"
     response_condition = "syslog-no-shield-condition"
   }
 
@@ -193,7 +193,6 @@ resource "fastly_service_v1" "fastly" {
   }
 
   force_destroy = true
-
 }
 
 data "template_file" "custom_vcl" {
@@ -245,15 +244,15 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
   }
 
   syslog {
-    name            = "${local.full_domain_name}"
-    address         = "intake.logs.datadoghq.com"
-    port            = "10516"
-    message_type    = "blank"
-    format          = "${module.secretsmanager.datadog_api_key} '%t %u %v \"%r\" %>s %b %h'"
-    format_version  = "2"
-    use_tls         = true
-    tls_hostname    = "intake.logs.datadoghq.com"
-    tls_ca_cert     = "${local.tls_ca_cert}"
+    name           = "${local.full_domain_name}"
+    address        = "intake.logs.datadoghq.com"
+    port           = "10516"
+    message_type   = "blank"
+    format         = "${module.secretsmanager.datadog_api_key} '%t %u %v \"%r\" %>s %b %h'"
+    format_version = "2"
+    use_tls        = true
+    tls_hostname   = "intake.logs.datadoghq.com"
+    tls_ca_cert    = "${local.tls_ca_cert}"
   }
 }
 
