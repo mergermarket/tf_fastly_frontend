@@ -106,15 +106,22 @@ Plan: 1 to add, 0 to change, 0 to destroy.
           """.strip()), output)  # noqa
 
         assert re.search("""
-        syslog.*.format:                     \" {  \\\\\"ddsource\\\\\": \\\\\"fastly\\\\\",  \\\\\"service\\\\\": \\\\\"%{req.http.host}V\\\\\"
+        syslog.*.format:                      \" {  \\\\\"ddsource\\\\\": \\\\\"fastly\\\\\",  \\\\\"service\\\\\": \\\\\"%{req.http.host}V\\\\\"
           """.strip(), output)  # noqa
+
+        assert re.search(template_to_re("""
+        condition.{ident}.name:                    "syslog-no-shield-condition"
+        condition.{ident}.priority:                "10"
+        condition.{ident}.statement:               "!req.http.Fastly-FF"
+        condition.{ident}.type:                    "RESPONSE"
+          """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
         syslog.{ident}.format_version:              "2"
         syslog.{ident}.message_type:                "blank"
         syslog.{ident}.name:                        "ci-www.domain.com-syslog"
         syslog.{ident}.port:                        "10516"
-        syslog.{ident}.response_condition:          ""
+        syslog.{ident}.response_condition:          "syslog-no-shield-condition"
           """.strip()), output)  # noqa
 
         assert re.search(template_to_re("""
