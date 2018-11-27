@@ -124,6 +124,22 @@ resource "fastly_service_v1" "fastly" {
     statement = "beresp.status == 502 && req.http.Cookie:viewerror != \"true\""
   }
 
+  response_object {
+    name            = "error-response-404"
+    status          = 404
+    response        = "Not Found"
+    content         = "${var.proxy_not_found_response}"
+    content_type    = "text/html"
+    cache_condition = "response-404-condition"
+  }
+
+  condition {
+    name      = "response-404-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""
+  }
+
   condition {
     name      = "surrogate-key-condition"
     type      = "CACHE"
