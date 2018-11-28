@@ -90,6 +90,38 @@ resource "fastly_service_v1" "fastly" {
     statement = "req.url ${var.env == "live" ? "!~ \".*\"" : "~ \"^/robots.txt\""}"
   }
 
+  response_object {
+    name            = "error-response-404"
+    status          = 404
+    response        = "Not Found"
+    content         = "${var.proxy_not_found_response}"
+    content_type    = "text/html"
+    cache_condition = "response-404-condition"
+  }
+
+  condition {
+    name      = "response-404-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""
+  }
+
+  response_object {
+    name            = "error-response-500"
+    status          = 500
+    response        = "Server Error"
+    content         = "${var.proxy_error_response}"
+    content_type    = "text/html"
+    cache_condition = "response-500-condition"
+  }
+
+  condition {
+    name      = "response-500-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "beresp.status == 500 && req.http.Cookie:viewerror != \"true\""
+  }
+
   # 503 error handling
   response_object {
     name            = "error-response-503"
@@ -122,22 +154,6 @@ resource "fastly_service_v1" "fastly" {
     type      = "CACHE"
     priority  = 5
     statement = "beresp.status == 502 && req.http.Cookie:viewerror != \"true\""
-  }
-
-  response_object {
-    name            = "error-response-404"
-    status          = 404
-    response        = "Not Found"
-    content         = "${var.proxy_not_found_response}"
-    content_type    = "text/html"
-    cache_condition = "response-404-condition"
-  }
-
-  condition {
-    name      = "response-404-condition"
-    type      = "CACHE"
-    priority  = 5
-    statement = "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""
   }
 
   condition {
