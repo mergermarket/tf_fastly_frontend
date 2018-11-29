@@ -90,6 +90,38 @@ resource "fastly_service_v1" "fastly" {
     statement = "req.url ${var.env == "live" ? "!~ \".*\"" : "~ \"^/robots.txt\""}"
   }
 
+  response_object {
+    name            = "error-response-404"
+    status          = 404
+    response        = "Not Found"
+    content         = "${var.not_found_response}"
+    content_type    = "text/html"
+    cache_condition = "response-404-condition"
+  }
+
+  condition {
+    name      = "response-404-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "${var.not_found_response == "" ? "now.sec == \"\"" : "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""}"
+  }
+
+  response_object {
+    name            = "error-response-500"
+    status          = 500
+    response        = "Server Error"
+    content         = "${var.error_response}"
+    content_type    = "text/html"
+    cache_condition = "response-500-condition"
+  }
+
+  condition {
+    name      = "response-500-condition"
+    type      = "CACHE"
+    priority  = 5
+    statement = "${var.error_response == "" ? "now.sec == \"\"" : "beresp.status == 500 && req.http.Cookie:viewerror != \"true\""}"
+  }
+
   # 503 error handling
   response_object {
     name            = "error-response-503"

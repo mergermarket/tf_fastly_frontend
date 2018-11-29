@@ -88,6 +88,18 @@ variable "proxy_error_response" {
 EOF
 }
 
+variable "not_found_response" {
+  type        = "string"
+  description = "The html error document to send for a not found error"
+  default     = ""
+}
+
+variable "error_response" {
+  type        = "string"
+  description = "The html error document to send for a not found error"
+  default     = ""
+}
+
 variable "custom_vcl_backends" {
   type        = "string"
   description = "Custom VCL to add at the top level (e.g. for defining backends)"
