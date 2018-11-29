@@ -91,41 +91,13 @@ EOF
 variable "not_found_response" {
   type        = "string"
   description = "The html error document to send for a not found error"
-
-  default = <<EOF
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Page not found</title>
-  </head>
-  <body>
-    <h1>Page not found</h1>
-    <p>
-    The page you requested could not be found
-    </p>
-  </body>
-</html>
-EOF
+  default     = ""
 }
 
 variable "error_response" {
   type        = "string"
   description = "The html error document to send for a not found error"
-
-  default = <<EOF
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Server Error</title>
-  </head>
-  <body>
-    <h1>Server Error</h1>
-    <p>
-    An error has occurred
-    </p>
-  </body>
-</html>
-EOF
+  default     = ""
 }
 
 variable "custom_vcl_backends" {
