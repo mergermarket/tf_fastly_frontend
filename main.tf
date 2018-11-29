@@ -103,7 +103,7 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-404-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "${var.not_found_response == "" ? false : beresp.status == 404 && req.http.Cookie:viewerror != \"true\"}"
+    statement = "${var.not_found_response == "" ? "false" : "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""}"
   }
 
   response_object {
@@ -119,7 +119,7 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-500-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "${var.error_response == "" ? false : beresp.status == 500 && req.http.Cookie:viewerror != \"true\"}"
+    statement = "${var.error_response == "" ? "false" : "beresp.status == 500 && req.http.Cookie:viewerror != \"true\""}"
   }
 
   # 503 error handling
