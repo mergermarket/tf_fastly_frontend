@@ -94,7 +94,7 @@ resource "fastly_service_v1" "fastly" {
     name            = "error-response-404"
     status          = 404
     response        = "Not Found"
-    content         = "${var.proxy_not_found_response}"
+    content         = "${var.not_found_response}"
     content_type    = "text/html"
     cache_condition = "response-404-condition"
   }
@@ -103,14 +103,14 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-404-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "beresp.status == 404 && req.http.Cookie:viewerror != \"true\""
+    statement = "${var.not_found_response == "" ? false : beresp.status == 404 && req.http.Cookie:viewerror != \"true\"}"
   }
 
   response_object {
     name            = "error-response-500"
     status          = 500
     response        = "Server Error"
-    content         = "${var.proxy_error_response}"
+    content         = "${var.error_response}"
     content_type    = "text/html"
     cache_condition = "response-500-condition"
   }
@@ -119,7 +119,7 @@ resource "fastly_service_v1" "fastly" {
     name      = "response-500-condition"
     type      = "CACHE"
     priority  = 5
-    statement = "beresp.status == 500 && req.http.Cookie:viewerror != \"true\""
+    statement = "${var.error_response == "" ? false : beresp.status == 500 && req.http.Cookie:viewerror != \"true\"}"
   }
 
   # 503 error handling
