@@ -289,5 +289,5 @@ resource "fastly_service_v1" "fastly_bare_domain_redirection" {
 }
 
 data "local_file" "container_definitions" {
-  template = "${file("${path.module}/dd_log_format.json")}"
+  filename = "${path.module}/dd_log_format.json"
 }
