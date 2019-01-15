@@ -99,8 +99,6 @@ Plan: 1 to add, 0 to change, 0 to destroy.
             'test/infra'
         ], env=self._env_for_check_output('qwerty')).decode('utf-8')
 
-        print(output)
-
         # Then
         assert re.search(template_to_re("""
         syslog.#:                                     "1"
