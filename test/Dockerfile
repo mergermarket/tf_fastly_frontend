@@ -1,4 +1,4 @@
-FROM python:3-alpine3.7
+FROM python:3-alpine3.8
 COPY requirements.txt .
 
 ENV TERRAFORM_VERSION=0.11.11
