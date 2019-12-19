@@ -48,6 +48,7 @@
   "request_forwarded": "%{Forwarded}i",
   "request_via": "%{Via}i",
   "request_cache_control": "%{Cache-Control}i",
+  "request_x_correlation_id": "%{X-Correlation-Id}i",
   "request_x_requested_with": "%{X-Requested-With}i",
   "request_x_att_device_id": "%{X-ATT-Device-Id}i",
   "content_type": "%{Content-Type}o",
