@@ -9,6 +9,10 @@ sub vcl_recv {
 
   ${custom_vcl_recv}
   if (! req.http.fastly-ff) {
+
+    # Adds X-Client-IP header
+    set req.http.X-Client-IP = req.http.Fastly-Client-IP;
+    
     ${custom_vcl_recv_no_shield}
   }
   if (req.http.fastly-ff) {
