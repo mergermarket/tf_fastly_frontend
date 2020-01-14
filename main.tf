@@ -141,16 +141,7 @@ resource "fastly_service_v1" "fastly" {
     priority  = 10
     statement = "!req.http.Fastly-FF"
   }
-
-  # Add the client ip
-  header {
-    name        = "Add X-Client-IP header"
-    source      = "req.http.Fastly-Client-IP"
-    destination = "http.X-Client-IP"
-    type        = "request"
-    action      = "set"
-  }
-
+  
   # Sanitise HTTP headers
   header {
     name        = "Remove X-Powered-By header"
