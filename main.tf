@@ -27,6 +27,7 @@ resource "fastly_service_v1" "fastly" {
     use_ssl               = "true"
     ssl_check_cert        = "${var.ssl_cert_check}"
     ssl_cert_hostname     = "${var.ssl_cert_hostname}"
+    ssl_sni_hostname      = "${var.ssl_sni_hostname}"
     connect_timeout       = "${var.connect_timeout}"
     first_byte_timeout    = "${var.first_byte_timeout}"
     between_bytes_timeout = "${var.between_bytes_timeout}"

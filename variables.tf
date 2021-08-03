@@ -68,6 +68,12 @@ variable "ssl_cert_hostname" {
   default     = ""
 }
 
+variable "ssl_sni_hostname" {
+  type        = "string"
+  description = "The hostname used for the SNI handshake"
+  default     = ""
+}
+
 variable "proxy_error_response" {
   type        = "string"
   description = "The html error document to send for a proxy error - 502/503 from backend, or no response from backend at all."
